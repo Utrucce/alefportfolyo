@@ -1,3 +1,8 @@
+/**
+ * ALΣF Portal & Privacy Script
+ * Sertan Çubukcu (sertancubukcu@gmail.com)
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Dil Seçici (Türkçe / English / İkisi)
   const langButtons = document.querySelectorAll('.lang-btn');
@@ -41,21 +46,26 @@ document.addEventListener('DOMContentLoaded', () => {
     setLanguage(document.documentElement.getAttribute('data-lang') || 'tr');
   });
 
-  // 2. Kaydırmalı Galeriler (birden fazla galeri desteklenir)
-  document.querySelectorAll('[data-carousel]').forEach(wrap => {
-    const track = wrap.querySelector('.screenshot-track');
-    const prev = wrap.querySelector('[data-dir="prev"]');
-    const next = wrap.querySelector('[data-dir="next"]');
-    if (!track) return;
-    const step = () => {
-      const card = track.querySelector('.phone-mockup');
-      return card ? card.getBoundingClientRect().width + 16 : 260;
-    };
-    if (prev) prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
-    if (next) next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
-  });
+  // 2. Ekran Görüntüleri Kaydırma Rayı (Carousel)
+  const track = document.getElementById('screenshotTrack');
+  const prevBtn = document.getElementById('prevScreenshot');
+  const nextBtn = document.getElementById('nextScreenshot');
 
-  // 3. Büyük Görüntüleyici (Lightbox)
+  if (track) {
+    const scrollStep = 280;
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        track.scrollBy({ left: -scrollStep, behavior: 'smooth' });
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        track.scrollBy({ left: scrollStep, behavior: 'smooth' });
+      });
+    }
+  }
+
+  // 3. Büyük Görüntüleyici (Lightbox Modal)
   const lightbox = document.getElementById('lightboxModal');
   const lightboxImg = document.getElementById('lightboxImg');
   const lightboxCaption = document.getElementById('lightboxCaption');
@@ -89,12 +99,12 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('click', (e) => {
       if (e.target.closest('a')) return;
       const img = card.querySelector('img');
-      const caption = card.querySelector('.phone-caption, h4');
+      const caption = card.querySelector('.phone-caption, h4, .app-meta h3');
       if (img) openLightbox(img.src, caption ? caption.textContent.trim() : img.alt);
     });
   });
 
-  // 4. Bildirim Kutusu
+  // 4. Bildirim Kutusu (Toast)
   function showToast(message) {
     let toast = document.getElementById('toastNotice');
     if (!toast) {

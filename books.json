@@ -2,78 +2,57 @@
   {
     "id": "7RdaEQAAQBAJ",
     "title": "Utrucce",
-    "clean_title": "Utrucce",
+    "rating": "5.0",
+    "free": true,
     "url": "https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_Utrucce?id=7RdaEQAAQBAJ&hl=tr",
-    "img": "https://play.google.com/books/publisher/content/images/frontcover/7RdaEQAAQBAJ?fife=w256-h256",
-    "local_cover": "assets/book_utrucce.jpg",
-    "author": "Sertan Çubukcu",
-    "rating": "5,0",
-    "price": "Ücretsiz"
+    "cover": "assets/book_utrucce.jpg"
   },
   {
     "id": "F9jWEQAAQBAJ",
     "title": "Pırtıl Terakki-2, Türkçe ÖABT",
-    "clean_title": "Pırtıl Terakki-2, Türkçe ÖABT",
+    "rating": "3.4",
+    "free": true,
     "url": "https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_P%C4%B1rt%C4%B1l_Terakki_2_T%C3%BCrk%C3%A7e_%C3%96ABT?id=F9jWEQAAQBAJ",
-    "img": "https://play.google.com/books/publisher/content/images/frontcover/F9jWEQAAQBAJ?fife=w256-h256",
-    "local_cover": "assets/book_cover_F9jWEQAAQBAJ.jpg",
-    "author": "Sertan Çubukcu",
-    "rating": "3,4",
-    "price": "Ücretsiz"
+    "cover": "assets/book_cover_F9jWEQAAQBAJ.jpg"
   },
   {
     "id": "TzTMEQAAQBAJ",
     "title": "Türkçe ÖABT Denemesi, Pırtıl-Terakki",
-    "clean_title": "Türkçe ÖABT Denemesi, Pırtıl-Terakki",
+    "rating": "2.3",
+    "free": true,
     "url": "https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_T%C3%BCrk%C3%A7e_%C3%96ABT_Denemesi_P%C4%B1rt%C4%B1l_Terakki?id=TzTMEQAAQBAJ",
-    "img": "https://play.google.com/books/publisher/content/images/frontcover/TzTMEQAAQBAJ?fife=w256-h256",
-    "local_cover": "assets/book_cover_TzTMEQAAQBAJ.jpg",
-    "author": "Sertan Çubukcu",
-    "rating": "2,3",
-    "price": "Ücretsiz"
+    "cover": "assets/book_cover_TzTMEQAAQBAJ.jpg"
   },
   {
     "id": "_uPKEQAAQBAJ",
     "title": "Halk Edebiyatı - Girizgâh, Soru Mecmuası",
-    "clean_title": "Halk Edebiyatı - Girizgâh, Soru Mecmuası",
+    "rating": "4.2",
+    "free": true,
     "url": "https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_Halk_Edebiyat%C4%B1_Girizg%C3%A2h_Soru_Mecmua?id=_uPKEQAAQBAJ",
-    "img": "https://play.google.com/books/publisher/content/images/frontcover/_uPKEQAAQBAJ?fife=w256-h256",
-    "local_cover": "assets/book_cover__uPKEQAAQBAJ.jpg",
-    "author": "Sertan Çubukcu",
-    "rating": "4,2",
-    "price": "Ücretsiz"
+    "cover": "assets/book_cover__uPKEQAAQBAJ.jpg"
   },
   {
     "id": "xuPKEQAAQBAJ",
     "title": "2024 Maarif Karikatürleştirilmiş Öğrenme Çıktıları",
-    "clean_title": "2024 Maarif Karikatürleştirilmiş Öğrenme Çıktıları",
-    "url": "https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_2024_Ortaokul_T%C3%BCrk%C3%A7e_%C3%96%C4%9Fretim_Progra?id=xuPKEQAAQBAJ",
-    "img": "https://play.google.com/books/publisher/content/images/frontcover/xuPKEQAAQBAJ?fife=w256-h256",
-    "local_cover": "assets/book_cover_xuPKEQAAQBAJ.jpg",
-    "author": "Sertan Çubukcu",
-    "rating": "4,7",
-    "price": "Ücretsiz"
+    "rating": "4.8",
+    "free": true,
+    "url": "https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_2024_Maarif_Karikat%C3%BCrle%C5%9Ftirildi_ve_T?id=xuPKEQAAQBAJ",
+    "cover": "assets/book_cover_xuPKEQAAQBAJ.jpg"
   },
   {
     "id": "NLMCEgAAQBAJ",
     "title": "Mihenk Zühre / Türkçe ÖABT",
-    "clean_title": "Mihenk Zühre / Türkçe ÖABT",
+    "rating": "3.7",
+    "free": true,
     "url": "https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_Mihenk_Z%C3%BChre_T%C3%BCrk%C3%A7e_%C3%96ABT?id=NLMCEgAAQBAJ",
-    "img": "https://play.google.com/books/publisher/content/images/frontcover/NLMCEgAAQBAJ?fife=w256-h256",
-    "local_cover": "assets/book_cover_NLMCEgAAQBAJ.jpg",
-    "author": "Sertan Çubukcu",
-    "rating": "4,3",
-    "price": "Ücretsiz"
+    "cover": "assets/book_cover_NLMCEgAAQBAJ.jpg"
   },
   {
     "id": "RBLZEQAAQBAJ",
     "title": "Türkçe ÖABT Denemesi / Pırtlak-1",
-    "clean_title": "Türkçe ÖABT Denemesi / Pırtlak-1",
+    "rating": "4.0",
+    "free": true,
     "url": "https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_T%C3%BCrk%C3%A7e_%C3%96ABT_Denemesi_P%C4%B1rtlak_1?id=RBLZEQAAQBAJ",
-    "img": "https://play.google.com/books/publisher/content/images/frontcover/RBLZEQAAQBAJ?fife=w256-h256",
-    "local_cover": "assets/book_cover_RBLZEQAAQBAJ.jpg",
-    "author": "Sertan Çubukcu",
-    "rating": "4,2",
-    "price": "Ücretsiz"
+    "cover": "assets/book_cover_RBLZEQAAQBAJ.jpg"
   }
 ]
