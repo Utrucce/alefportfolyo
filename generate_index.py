@@ -25,6 +25,9 @@ html_content = """<!DOCTYPE html>
   <!-- Zıplayan & Su Sıçratan Mitolojik Balina -->
   <div id="whaleContainer" aria-hidden="true"></div>
 
+  <!-- Ekran Su Sıçratması & Islanma Efekti (Screen Water Droplets) -->
+  <div id="screenSplashOverlay" class="screen-splash-overlay" aria-hidden="true"></div>
+
   <!-- Balina Çağırma / Zıplatma Butonu -->
   <button id="summonWhaleBtn" class="whale-trigger-btn" aria-label="Balinayı Zıplat" title="Mitolojik Balinayı Çağır">
     <span style="font-size: 1.15rem;">🌊</span> Balinayı Zıplat <span style="font-size: 1.15rem;">🐋</span>
@@ -184,7 +187,7 @@ html_content = """<!DOCTYPE html>
         <div class="app-card">
           <div>
             <div class="app-card-header">
-              <img src="assets/kpss_phone_icon.png" alt="ALΣF KPSS Logo" class="app-icon-thumb">
+              <img src="assets/app-kpss-logo.png" alt="ALΣF KPSS Logo" class="app-icon-thumb">
               <div class="app-meta">
                 <h3>AL<span class="sigma">Σ</span>F KPSS</h3>
                 <span>Genel Yetenek &amp; Genel Kültür</span>
@@ -206,7 +209,7 @@ html_content = """<!DOCTYPE html>
         <div class="app-card">
           <div>
             <div class="app-card-header">
-              <img src="assets/ekys_phone_icon.png" alt="ALΣF EKYS Logo" class="app-icon-thumb">
+              <img src="assets/app-ekys-logo.png" alt="ALΣF EKYS Logo" class="app-icon-thumb">
               <div class="app-meta">
                 <h3>AL<span class="sigma">Σ</span>F EKYS</h3>
                 <span>Eğitim Kurumları Yöneticiliği</span>
@@ -228,7 +231,7 @@ html_content = """<!DOCTYPE html>
         <div class="app-card">
           <div>
             <div class="app-card-header">
-              <img src="assets/app-islam-vakti.png" alt="İslam Vakti Logo" class="app-icon-thumb">
+              <img src="assets/app-islam-vakti-logo.png" alt="İslam Vakti Logo" class="app-icon-thumb">
               <div class="app-meta">
                 <h3>İslam Vakti: Omuz Omuza</h3>
                 <span>Manevi Yaşam &amp; İbadet</span>
@@ -250,7 +253,7 @@ html_content = """<!DOCTYPE html>
         <div class="app-card">
           <div>
             <div class="app-card-header">
-              <img src="assets/app-kible-bulucu.png" alt="Kıble Bulucu Logo" class="app-icon-thumb">
+              <img src="assets/app-kible-logo.png" alt="Kıble Bulucu Logo" class="app-icon-thumb">
               <div class="app-meta">
                 <h3>Kıble Bulucu</h3>
                 <span>Pusula ve Harita Destekli</span>
@@ -294,7 +297,7 @@ html_content = """<!DOCTYPE html>
         <div class="app-card">
           <div>
             <div class="app-card-header">
-              <img src="assets/app-mergen.jpg" alt="Mergen Logo" class="app-icon-thumb">
+              <img src="assets/app-mergen-logo.png" alt="Mergen Logo" class="app-icon-thumb">
               <div class="app-meta">
                 <h3>Mergen</h3>
                 <span>Akıl ve Strateji Motoru</span>
@@ -316,7 +319,7 @@ html_content = """<!DOCTYPE html>
         <div class="app-card">
           <div>
             <div class="app-card-header">
-              <img src="assets/app-pirtil.jpg" alt="Pırtıl Logo" class="app-icon-thumb">
+              <img src="assets/app-pirtil-logo.png" alt="Pırtıl Logo" class="app-icon-thumb">
               <div class="app-meta">
                 <h3>Pırtıl</h3>
                 <span>Yerel Sûnî Zekâ</span>
@@ -338,7 +341,7 @@ html_content = """<!DOCTYPE html>
         <div class="app-card">
           <div>
             <div class="app-card-header">
-              <img src="assets/app-asayis-berko.jpg" alt="Asayiş Berko Logo" class="app-icon-thumb">
+              <img src="assets/app-berko-logo.png" alt="Asayiş Berko Logo" class="app-icon-thumb">
               <div class="app-meta">
                 <h3>Asayiş Berko</h3>
                 <span>Dijital Güvenlik ve Emniyet</span>

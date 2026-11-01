@@ -31,6 +31,9 @@ html_content = """<!DOCTYPE html>
   <!-- Zıplayan & Su Sıçratan Mitolojik Balina -->
   <div id="whaleContainer" aria-hidden="true"></div>
 
+  <!-- Ekran Su Sıçratması & Islanma Efekti (Screen Water Droplets) -->
+  <div id="screenSplashOverlay" class="screen-splash-overlay" aria-hidden="true"></div>
+
   <!-- Balina Çağırma / Zıplatma Butonu -->
   <button id="summonWhaleBtn" class="whale-trigger-btn" aria-label="Balinayı Zıplat" title="Mitolojik Balinayı Çağır">
     <span style="font-size: 1.15rem;">🌊</span> Balinayı Zıplat <span style="font-size: 1.15rem;">🐋</span>
