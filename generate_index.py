@@ -1085,7 +1085,9 @@ html_content = """<!DOCTYPE html>
   <div id="toastNotice" class="toast-notice"></div>
 
   <script src="assets/three.min.js"></script>
+  <script>if (typeof THREE === 'undefined') { document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>'); }</script>
   <script src="assets/rainyday.min.js"></script>
+  <script>if (typeof RainyDay === 'undefined') { document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/rainyday.js/0.1.2/rainyday.min.js"><\/script>'); }</script>
   <script src="script.js"></script>
 </body>
 </html>
