@@ -1,76 +1,61 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Language Switcher Logic
+  // 1. Dil Seçici (Türkçe / English / İkisi)
   const langButtons = document.querySelectorAll('.lang-btn');
-  const trContent = document.querySelectorAll('.content-tr');
-  const enContent = document.querySelectorAll('.content-en');
-  const dualContainer = document.querySelector('.dual-lang-container');
-  let activeLanguage = 'tr';
-
-  function updateLanguageColumns() {
-    if (!dualContainer) return;
-    dualContainer.style.gridTemplateColumns =
-      activeLanguage === 'both' && window.innerWidth > 860
-        ? 'repeat(2, minmax(0, 1fr))'
-        : '1fr';
-  }
+  const dualContainers = document.querySelectorAll('.dual-lang-container');
 
   function setLanguage(lang) {
     if (!['tr', 'en', 'both'].includes(lang)) lang = 'tr';
-    activeLanguage = lang;
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.lang = lang === 'en' ? 'en' : 'tr';
 
     langButtons.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.lang === lang);
-      btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang));
+      const isActive = btn.dataset.lang === lang;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     });
 
-    if (lang === 'tr') {
-      trContent.forEach(el => el.style.display = 'block');
-      enContent.forEach(el => el.style.display = 'none');
-    } else if (lang === 'en') {
-      trContent.forEach(el => el.style.display = 'none');
-      enContent.forEach(el => el.style.display = 'block');
-    } else if (lang === 'both') {
-      trContent.forEach(el => el.style.display = 'block');
-      enContent.forEach(el => el.style.display = 'block');
-    }
-    updateLanguageColumns();
-    try {
-      localStorage.setItem('alef_site_lang', lang);
-    } catch (error) {
-      showToast('Dil tercihi bu tarayıcıda kaydedilemedi.');
-    }
+    document.querySelectorAll('.content-tr').forEach(el => {
+      el.hidden = (lang === 'en');
+    });
+    document.querySelectorAll('.content-en').forEach(el => {
+      el.hidden = (lang === 'tr');
+    });
+
+    const wide = window.matchMedia('(min-width: 900px)').matches;
+    dualContainers.forEach(c => {
+      c.style.gridTemplateColumns = (lang === 'both' && wide) ? '1fr 1fr' : '1fr';
+    });
+
+    try { localStorage.setItem('alef_site_lang', lang); } catch (e) {}
   }
 
   langButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      setLanguage(btn.dataset.lang);
-    });
-    window.addEventListener('resize', updateLanguageColumns);
+    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
   });
 
   let savedLang = 'tr';
-  try {
-    savedLang = localStorage.getItem('alef_site_lang') || 'tr';
-  } catch (error) {
-    showToast('Dil tercihi okunamadı; Türkçe gösteriliyor.');
-  }
+  try { savedLang = localStorage.getItem('alef_site_lang') || 'tr'; } catch (e) {}
   setLanguage(savedLang);
 
-  // 2. Carousel Controls
-  const track = document.getElementById('screenshotTrack');
-  const prevBtn = document.getElementById('prevScreenshot');
-  const nextBtn = document.getElementById('nextScreenshot');
+  window.addEventListener('resize', () => {
+    setLanguage(document.documentElement.getAttribute('data-lang') || 'tr');
+  });
 
-  if (track && prevBtn && nextBtn) {
-    prevBtn.addEventListener('click', () => {
-      track.scrollBy({ left: -280, behavior: 'smooth' });
-    });
-    nextBtn.addEventListener('click', () => {
-      track.scrollBy({ left: 280, behavior: 'smooth' });
-    });
-  }
+  // 2. Kaydırmalı Galeriler (birden fazla galeri desteklenir)
+  document.querySelectorAll('[data-carousel]').forEach(wrap => {
+    const track = wrap.querySelector('.screenshot-track');
+    const prev = wrap.querySelector('[data-dir="prev"]');
+    const next = wrap.querySelector('[data-dir="next"]');
+    if (!track) return;
+    const step = () => {
+      const card = track.querySelector('.phone-mockup');
+      return card ? card.getBoundingClientRect().width + 16 : 260;
+    };
+    if (prev) prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+    if (next) next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+  });
 
-  // 3. Lightbox Functionality
+  // 3. Büyük Görüntüleyici (Lightbox)
   const lightbox = document.getElementById('lightboxModal');
   const lightboxImg = document.getElementById('lightboxImg');
   const lightboxCaption = document.getElementById('lightboxCaption');
@@ -90,59 +75,26 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = '';
   }
 
-  if (lightboxClose) {
-    lightboxClose.addEventListener('click', closeLightbox);
-  }
-
+  if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
   if (lightbox) {
     lightbox.addEventListener('click', (e) => {
       if (e.target === lightbox) closeLightbox();
     });
   }
-
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeLightbox();
   });
 
-  // Attach Lightbox to mockups and info cards
-  document.querySelectorAll('.phone-mockup, .info-card').forEach(card => {
-    card.addEventListener('click', () => {
+  document.querySelectorAll('.phone-mockup, .zoomable').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
       const img = card.querySelector('img');
       const caption = card.querySelector('.phone-caption, h4');
-      if (img) {
-        openLightbox(img.src, caption ? caption.textContent.trim() : '');
-      }
+      if (img) openLightbox(img.src, caption ? caption.textContent.trim() : img.alt);
     });
   });
 
-  function copyToClipboard(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      return navigator.clipboard.writeText(text);
-    }
-
-    const field = document.createElement('textarea');
-    field.value = text;
-    field.setAttribute('readonly', '');
-    field.style.position = 'fixed';
-    field.style.opacity = '0';
-    document.body.appendChild(field);
-    field.select();
-
-    let copied = false;
-    try {
-      copied = document.execCommand('copy');
-    } catch (error) {
-      field.remove();
-      return Promise.reject(error);
-    }
-
-    field.remove();
-    return copied
-      ? Promise.resolve()
-      : Promise.reject(new Error('Panoya kopyalama desteklenmiyor.'));
-  }
-
-  // 4. Toast Notification
+  // 4. Bildirim Kutusu
   function showToast(message) {
     let toast = document.getElementById('toastNotice');
     if (!toast) {
@@ -153,50 +105,53 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     toast.textContent = message;
     toast.classList.add('show');
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 3000);
+    setTimeout(() => toast.classList.remove('show'), 3000);
   }
 
-  // 5. Copy Email
-  const copyEmailBtn = document.getElementById('copyEmailBtn');
-  if (copyEmailBtn) {
-    copyEmailBtn.addEventListener('click', (e) => {
+  function copyText(text, okMsg) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => showToast(okMsg)).catch(() => fallbackCopy(text, okMsg));
+    } else {
+      fallbackCopy(text, okMsg);
+    }
+  }
+
+  function fallbackCopy(text, okMsg) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast(okMsg);
+    } catch (e) {
+      showToast('Kopyalanamadı, lütfen elle kopyalayın.');
+    }
+    document.body.removeChild(ta);
+  }
+
+  // 5. E-posta Kopyalama
+  document.querySelectorAll('[data-copy-email]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
       e.preventDefault();
-      const email = 'sertancubukcu@gmail.com';
-      copyToClipboard(email).then(() => {
-        showToast('E-posta adresi panoya kopyalandı: ' + email);
-      }).catch(() => {
-        showToast('E-posta: ' + email);
-      });
+      copyText('sertancubukcu@gmail.com', 'E-posta adresi kopyalandı: sertancubukcu@gmail.com');
     });
-  }
+  });
 
-  // 6. Copy Full Policy Text for Play Console
+  // 6. Gizlilik Politikası Metnini Kopyalama
   const copyPolicyBtn = document.getElementById('copyPolicyBtn');
   if (copyPolicyBtn) {
     copyPolicyBtn.addEventListener('click', () => {
-      let activeLang = 'tr';
-      try {
-        activeLang = localStorage.getItem('alef_site_lang') || 'tr';
-      } catch (error) {
-        showToast('Dil tercihi okunamadı; Türkçe metin kopyalanıyor.');
-      }
-      let textToCopy = '';
-      if (activeLang === 'en') {
-        const enBox = document.querySelector('.content-en-full');
-        textToCopy = enBox ? enBox.innerText : '';
-      } else {
-        const trBox = document.querySelector('.content-tr-full');
-        textToCopy = trBox ? trBox.innerText : '';
-      }
-      if (textToCopy) {
-        copyToClipboard(textToCopy).then(() => {
-          showToast('Gizlilik Politikası metni panoya kopyalandı.');
-        }).catch(() => {
-          showToast('Kopyalama başarısız oldu, lütfen manuel kopyalayın.');
-        });
-      }
+      const lang = document.documentElement.getAttribute('data-lang') || 'tr';
+      const tr = document.querySelector('.policy-full-tr');
+      const en = document.querySelector('.policy-full-en');
+      let text = '';
+      if (lang === 'en') text = en ? en.innerText : '';
+      else if (lang === 'both') text = (tr ? tr.innerText : '') + '\n\n' + (en ? en.innerText : '');
+      else text = tr ? tr.innerText : '';
+      if (text.trim()) copyText(text.trim(), 'Gizlilik politikası metni kopyalandı.');
     });
   }
 });
