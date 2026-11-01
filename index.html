@@ -14,18 +14,22 @@
 <body>
 
   <!-- Animasyonlu Rengârenk Arka Plan Tuvali (Loraks, Transformers Energon & Yu-Gi-Oh Yıldızları) -->
+  <!-- Optik Cam Kırılması İçin Referans Görsel (RainyDay.js) -->
+  <img id="nanoBgRef" src="assets/site_bg_nano.png" style="display:none;" alt="Arka Plan Referansı" crossorigin="anonymous">
+
+  <!-- Animasyonlu Rengarenk Arka Plan Tuvali (Loraks, Transformers Energon & Yu-Gi-Oh Yıldızları) -->
   <canvas id="mythicBgCanvas"></canvas>
 
-  <!-- Uçuşan 3B Eterik Kelebekler -->
-  <div id="butterflyContainer" aria-hidden="true"></div>
+  <!-- 3B WebGL Eterik Kelebekler Tuvali (Three.js 3D Flapping Butterflies) -->
+  <canvas id="butterflyThreeCanvas" aria-hidden="true"></canvas>
 
-  <!-- Zıplayan & Su Sıçratan Mitolojik Balina -->
-  <div id="whaleContainer" aria-hidden="true"></div>
+  <!-- 3B WebGL Kambur Balina & Okyanus Sıçraması Tuvali (Three.js 3D Humpback Whale & Breach) -->
+  <canvas id="whaleThreeCanvas" aria-hidden="true"></canvas>
 
-  <!-- Ekran Su Sıçratması & Islanma Efekti (Screen Water Droplets) -->
-  <div id="screenSplashOverlay" class="screen-splash-overlay" aria-hidden="true"></div>
+  <!-- Gerçekçi Optik Cam Islanması & Su Damlaları (RainyDay.js + Fiziksel Su Lensi) -->
+  <div id="rainyGlassContainer" aria-hidden="true"></div>
+  <canvas id="screenSplashCanvas" aria-hidden="true"></canvas>
 
-  <!-- Balina Çağırma / Zıplatma Butonu -->
   <button id="summonWhaleBtn" class="whale-trigger-btn" aria-label="Balinayı Zıplat" title="Mitolojik Balinayı Çağır">
     <span style="font-size: 1.15rem;">🌊</span> Balinayı Zıplat <span style="font-size: 1.15rem;">🐋</span>
   </button>
@@ -1068,6 +1072,8 @@
   <!-- Bildirim Kutusu (Toast) -->
   <div id="toastNotice" class="toast-notice"></div>
 
+  <script src="assets/three.min.js"></script>
+  <script src="assets/rainyday.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

@@ -468,212 +468,145 @@ body::before {
   color: #fff !important;
 }
 
-/* ================= KELEBEKLER (BUTTERFLIES SYSTEM) ================= */
+/* ================= GERÇEKÇİ 3B FOTOĞRAFİK KELEBEKLER (MICHAEL BROMLEY & WIKIMEDIA 3D) ================= */
 #butterflyContainer {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 5;
+  z-index: 6;
   overflow: hidden;
 }
 
-.butterfly {
+.real-butterfly {
   position: absolute;
-  width: 28px;
-  height: 24px;
+  width: 58px;
+  height: 54px;
   pointer-events: none;
-  will-change: transform, left, top;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  will-change: transform;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
 }
 
-.butterfly .wings {
+.butterfly-3d-wrap {
   position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
 }
 
-.butterfly .wing {
+.wing-3d {
   position: absolute;
   top: 0;
-  width: 14px;
-  height: 22px;
-  border-radius: 50% 50% 20% 50%;
-  transform-origin: right center;
-  animation: flapWings 0.28s infinite alternate ease-in-out;
+  width: 52%;
+  height: 100%;
+  transform-style: preserve-3d;
 }
 
-.butterfly .wing-left {
+.wing-3d img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.wing-3d.wing-left {
   left: 0;
   transform-origin: right center;
+  animation: flapMorphoLeft 0.22s infinite alternate ease-in-out;
 }
 
-.butterfly .wing-right {
+.wing-3d.wing-right {
   right: 0;
-  border-radius: 50% 50% 50% 20%;
   transform-origin: left center;
-  animation: flapWingsRight 0.28s infinite alternate ease-in-out;
+  animation: flapMorphoRight 0.22s infinite alternate ease-in-out;
 }
 
-/* Kelebek Renk Çeşitleri (Lorax & Energon Tonları) */
-.butterfly.purple .wing {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.85) 0%, rgba(236, 72, 153, 0.7) 100%);
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
-}
-.butterfly.cyan .wing {
-  background: linear-gradient(135deg, rgba(6, 182, 212, 0.85) 0%, rgba(59, 130, 246, 0.7) 100%);
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
-}
-.butterfly.gold .wing {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.85) 0%, rgba(249, 115, 22, 0.7) 100%);
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
-}
-.butterfly.truffula .wing {
-  background: linear-gradient(135deg, rgba(255, 51, 153, 0.85) 0%, rgba(16, 185, 129, 0.7) 100%);
-  box-shadow: 0 0 10px rgba(255, 51, 153, 0.8);
+@keyframes flapMorphoLeft {
+  0% { transform: rotateY(0deg) rotateZ(0deg); }
+  100% { transform: rotateY(76deg) rotateZ(-12deg); }
 }
 
-@keyframes flapWings {
-  0% { transform: rotateY(0deg); }
-  100% { transform: rotateY(70deg); }
+@keyframes flapMorphoRight {
+  0% { transform: rotateY(0deg) rotateZ(0deg); }
+  100% { transform: rotateY(-76deg) rotateZ(12deg); }
 }
 
-@keyframes flapWingsRight {
-  0% { transform: rotateY(0deg); }
-  100% { transform: rotateY(-70deg); }
-}
-
-/* ================= ZIPLAYAN SU SIÇRATAN BALİNA (BREACHING WHALE) ================= */
-#whaleContainer {
+/* ================= 3B WEBGL ETERİK KELEBEKLER & KAMBUR BALİNA ================= */
+#butterflyThreeCanvas {
   position: fixed;
-  bottom: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
-  height: 380px;
+  height: 100vh;
   pointer-events: none;
-  z-index: 40;
-  overflow: hidden;
+  z-index: 12;
 }
 
-.whale-actor {
-  position: absolute;
-  bottom: -180px;
-  left: -200px;
-  width: 220px;
-  height: 140px;
-  will-change: transform, opacity;
-  opacity: 0;
-}
-
-/* Balina Atlama Animasyonu */
-.whale-actor.jumping {
-  animation: whaleBreach 4.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
-}
-
-@keyframes whaleBreach {
-  0% {
-    left: 8%;
-    bottom: -150px;
-    transform: rotate(-35deg) scale(0.7);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-    transform: rotate(-25deg) scale(0.9);
-  }
-  45% {
-    bottom: 180px;
-    transform: rotate(15deg) scale(1.15);
-  }
-  60% {
-    bottom: 210px;
-    transform: rotate(35deg) scale(1.2);
-    opacity: 1;
-  }
-  85% {
-    bottom: -100px;
-    transform: rotate(70deg) scale(0.95);
-    opacity: 0.9;
-  }
-  100% {
-    left: 78%;
-    bottom: -180px;
-    transform: rotate(85deg) scale(0.7);
-    opacity: 0;
-  }
-}
-
-/* Su Sıçratma Parçacıkları (Water Splash Droplets) */
-.splash-droplet {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #22d3ee 0%, #3b82f6 80%);
-  box-shadow: 0 0 8px #22d3ee;
+#whaleThreeCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
-  animation: dropletBurst 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+  z-index: 38;
 }
 
-@keyframes dropletBurst {
-  0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(var(--dx), var(--dy)) scale(0.2);
-    opacity: 0;
-  }
-}
-
-/* Su Dalga Halkası */
-.water-ring {
-  position: absolute;
-  bottom: 10px;
-  width: 20px;
-  height: 8px;
-  border-radius: 50%;
-  border: 2px solid rgba(34, 211, 238, 0.8);
-  box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+/* ================= GERÇEKÇİ OPTİK CAM ISLANMASI & SU DAMLALARI ================= */
+#rainyGlassContainer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
-  animation: ringExpand 1.4s ease-out forwards;
+  z-index: 48;
 }
 
-@keyframes ringExpand {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(8);
-    opacity: 0;
-  }
+#rainyGlassContainer canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
-/* Balina Çağırma Düğmesi (Sağ Altta Fantastik Buton) */
+#screenSplashCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 49;
+}
+
 .whale-trigger-btn {
   position: fixed;
   bottom: 24px;
   left: 24px;
-  z-index: 99;
-  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
-  color: #fff;
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  z-index: 999;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #075985 100%);
+  color: #fff !important;
+  border: 1.5px solid #38bdf8;
   border-radius: var(--radius-full);
-  padding: 8px 16px;
+  padding: 10px 20px;
   font-family: var(--font-heading);
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 18px rgba(0, 114, 255, 0.5);
+  box-shadow: 0 4px 22px rgba(2, 132, 199, 0.65), inset 0 0 14px rgba(56, 189, 248, 0.5);
   transition: var(--transition);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none !important;
 }
 
 .whale-trigger-btn:hover {
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 24px rgba(0, 198, 255, 0.7);
+  border-color: #fff;
+  box-shadow: 0 8px 30px rgba(56, 189, 248, 0.85), inset 0 0 18px rgba(255, 255, 255, 0.6);
 }
 
 /* ================= Giriş (Hero) Bölümü ================= */
@@ -1692,91 +1625,6 @@ body::before {
 }
 
 
-/* ================= EKRAN SU SIÇRATMASI & ISLANMA EFEKTİ ================= */
-#screenSplashOverlay {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 99999;
-  overflow: hidden;
-}
-
-.screen-splash-mist {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 60% 70%, rgba(220, 245, 255, 0.45) 0%, rgba(180, 230, 255, 0.25) 50%, transparent 80%);
-  backdrop-filter: blur(2.5px);
-  -webkit-backdrop-filter: blur(2.5px);
-  pointer-events: none;
-  animation: mistClear 1.8s ease-out forwards;
-}
-
-@keyframes mistClear {
-  0% { opacity: 0; }
-  15% { opacity: 1; }
-  60% { opacity: 0.8; }
-  100% { opacity: 0; }
-}
-
-.screen-water-drop {
-  position: absolute;
-  border-radius: 50% 50% 46% 46%;
-  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95) 0%, rgba(220, 245, 255, 0.75) 20%, rgba(140, 210, 255, 0.4) 65%, rgba(255, 255, 255, 0.2) 90%);
-  box-shadow: 
-    inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.95),
-    inset -1.5px -1.5px 3px rgba(10, 50, 100, 0.5),
-    0 4px 10px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(1.5px);
-  pointer-events: none;
-  will-change: transform, opacity;
-  animation: dropImpactDrip 3.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-@keyframes dropImpactDrip {
-  0% {
-    transform: scale(0.2) translateY(0);
-    opacity: 0;
-  }
-  8% {
-    transform: scale(1.25) translateY(0);
-    opacity: 1;
-  }
-  20% {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-  55% {
-    transform: scale(0.96, 1.25) translateY(calc(var(--drip-dist, 50px) * 0.5));
-    opacity: 0.95;
-  }
-  85% {
-    transform: scale(0.92, 1.45) translateY(var(--drip-dist, 50px));
-    opacity: 0.8;
-  }
-  100% {
-    transform: scale(0.85, 1.45) translateY(var(--drip-dist, 50px));
-    opacity: 0;
-  }
-}
-
-.screen-micro-drop {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #fff 0%, rgba(186, 230, 253, 0.8) 60%, rgba(56, 189, 248, 0.4) 100%);
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
-  pointer-events: none;
-  animation: microDropFade 2.4s ease-out forwards;
-}
-
-@keyframes microDropFade {
-  0% { transform: scale(0.3); opacity: 0; }
-  12% { transform: scale(1.1); opacity: 1; }
-  75% { transform: scale(1); opacity: 0.75; }
-  100% { transform: scale(0.4); opacity: 0; }
-}
 """
 
 with open(os.path.join(BASE_DIR, "styles.css"), "w", encoding="utf-8") as f:
