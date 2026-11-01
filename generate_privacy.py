@@ -26,11 +26,20 @@ html_content = """<!DOCTYPE html>
   <!-- Optik Cam Kırılması İçin Referans Görsel (RainyDay.js) -->
   <img id="nanoBgRef" src="assets/site_bg_nano.png" style="display:none;" alt="Arka Plan Referansı" crossorigin="anonymous">
 
+  <!-- Şimşek Çakması Işık Katmanı -->
+  <div id="lightningFlashOverlay" aria-hidden="true"></div>
+
+  <!-- Optik Cam Kırılması İçin Referans Görsel (RainyDay.js) -->
+  <img id="nanoBgRef" src="assets/site_bg_nano.png" style="display:none;" alt="Arka Plan Referansı" crossorigin="anonymous">
+
   <!-- Animasyonlu Rengarenk Arka Plan Tuvali (Loraks, Transformers Energon & Yu-Gi-Oh Yıldızları) -->
   <canvas id="mythicBgCanvas"></canvas>
 
-  <!-- 3B WebGL Eterik Kelebekler Tuvali (Three.js 3D Flapping Butterflies) -->
-  <canvas id="butterflyThreeCanvas" aria-hidden="true"></canvas>
+  <!-- Uçuşan 3B Fotoğrafik Eterik Kelebekler (Orijinal Morfo Kanatları) -->
+  <div id="butterflyContainer" aria-hidden="true"></div>
+
+  <!-- Ekranın Altında Dalgalanan Doğal Okyanus (Paralaks Destekli) -->
+  <canvas id="oceanWavesCanvas" aria-hidden="true"></canvas>
 
   <!-- 3B WebGL Kambur Balina & Okyanus Sıçraması Tuvali (Three.js 3D Humpback Whale & Breach) -->
   <canvas id="whaleThreeCanvas" aria-hidden="true"></canvas>

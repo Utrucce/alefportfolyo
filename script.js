@@ -314,6 +314,80 @@ function playWaterCrash(intensity = 1.0) {
 
 
 // ==========================================
+
+function playThunderSound() {
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+
+    // 1. Initial Sharp Crack
+    const crackBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.4, audioCtx.sampleRate);
+    const crackData = crackBuffer.getChannelData(0);
+    for (let i = 0; i < crackData.length; i++) {
+      crackData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.08));
+    }
+    const crackSource = audioCtx.createBufferSource();
+    crackSource.buffer = crackBuffer;
+    const crackFilter = audioCtx.createBiquadFilter();
+    crackFilter.type = 'bandpass';
+    crackFilter.frequency.setValueAtTime(600, now);
+    crackFilter.frequency.exponentialRampToValueAtTime(180, now + 0.35);
+    crackFilter.Q.setValueAtTime(3.5, now);
+    const crackGain = audioCtx.createGain();
+    crackGain.gain.setValueAtTime(0.75, now);
+    crackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+    crackSource.connect(crackFilter);
+    crackFilter.connect(crackGain);
+    crackGain.connect(audioCtx.destination);
+    crackSource.start(now);
+
+    // 2. Deep Rolling Thunder Rumble (3.5 saniye)
+    const rumbleLen = audioCtx.sampleRate * 3.5;
+    const rumbleBuffer = audioCtx.createBuffer(1, rumbleLen, audioCtx.sampleRate);
+    const rumbleData = rumbleBuffer.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < rumbleLen; i++) {
+      const white = Math.random() * 2 - 1;
+      last = (last + (0.02 * white)) / 1.02;
+      rumbleData[i] = last * 3.5;
+    }
+    const rumbleSource = audioCtx.createBufferSource();
+    rumbleSource.buffer = rumbleBuffer;
+    const rumbleFilter = audioCtx.createBiquadFilter();
+    rumbleFilter.type = 'lowpass';
+    rumbleFilter.frequency.setValueAtTime(140, now);
+    rumbleFilter.frequency.linearRampToValueAtTime(85, now + 2.0);
+    rumbleFilter.frequency.linearRampToValueAtTime(45, now + 3.5);
+    const rumbleGain = audioCtx.createGain();
+    rumbleGain.gain.setValueAtTime(0.001, now);
+    rumbleGain.gain.linearRampToValueAtTime(0.9, now + 0.15);
+    rumbleGain.gain.exponentialRampToValueAtTime(0.3, now + 1.8);
+    rumbleGain.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
+
+    // Sub-bass resonance (48Hz -> 24Hz)
+    const subOsc = audioCtx.createOscillator();
+    const subGain = audioCtx.createGain();
+    subOsc.type = 'triangle';
+    subOsc.frequency.setValueAtTime(48, now);
+    subOsc.frequency.exponentialRampToValueAtTime(24, now + 2.5);
+    subGain.gain.setValueAtTime(0.4, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+    subOsc.connect(subGain);
+    subGain.connect(audioCtx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 2.5);
+
+    rumbleSource.connect(rumbleFilter);
+    rumbleFilter.connect(rumbleGain);
+    rumbleGain.connect(audioCtx.destination);
+    rumbleSource.start(now);
+    rumbleSource.stop(now + 3.5);
+  } catch (e) {
+    console.warn('Gök gürültüsü üretilemedi:', e);
+  }
+}
+
 // 5. ANİMASYONLU MİTOLOJİK TUVAL (CANVAS)
 // ==========================================
 function initMythicBgCanvas() {
@@ -448,225 +522,203 @@ function initMythicBgCanvas() {
 
 
 // ==========================================
-// 6. 3B WEBGL ETERİK KELEBEKLER MOTORU (THREE.JS 3D FLAPPING BUTTERFLIES)
 // ==========================================
-class ButterfliesThreeEngine {
-  constructor(canvas) {
-    this.canvas = canvas;
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
-    this.butterflies = [];
+// 6. UÇUŞAN 3B FOTOĞRAFİK KELEBEKLER MOTORU
+// (Kullanıcı Talebi: Orijinal Wikimedia Morfo Kanatları ile 3B Çırpınma)
+// ==========================================
+function initPhotographicButterflies() {
+  const container = document.getElementById('butterflyContainer');
+  if (!container) return;
 
-    this.initScene();
-    this.buildButterflies();
-    this.bindEvents();
-    this.animate = this.animate.bind(this);
-    requestAnimationFrame(this.animate);
-  }
+  const butterflyTypes = [
+    { left: 'assets/real_wing_left_blue.png', right: 'assets/real_wing_right_blue.png' },
+    { left: 'assets/real_wing_left_emerald.png', right: 'assets/real_wing_right_emerald.png' },
+    { left: 'assets/real_wing_left_gold.png', right: 'assets/real_wing_right_gold.png' },
+    { left: 'assets/real_wing_left_purple.png', right: 'assets/real_wing_right_purple.png' }
+  ];
 
-  initScene() {
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.1, 1000);
-    this.camera.position.set(0, 0, 32);
+  const butterflies = [];
+  const count = Math.min(8, Math.max(5, Math.floor(window.innerWidth / 200)));
 
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true });
-    this.renderer.setSize(this.width, this.height);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  for (let i = 0; i < count; i++) {
+    const type = butterflyTypes[i % butterflyTypes.length];
+    const el = document.createElement('div');
+    el.className = 'real-butterfly';
+    el.innerHTML = `
+      <div class="butterfly-3d-wrap">
+        <div class="wing-3d wing-left">
+          <img src="${type.left}" alt="Sol Kanat" loading="lazy">
+        </div>
+        <div class="wing-3d wing-right">
+          <img src="${type.right}" alt="Sağ Kanat" loading="lazy">
+        </div>
+      </div>
+    `;
+    container.appendChild(el);
 
-    const amb = new THREE.AmbientLight(0xffffff, 1.4);
-    this.scene.add(amb);
-    const dir = new THREE.DirectionalLight(0xfff5e0, 1.1);
-    dir.position.set(10, 15, 15);
-    this.scene.add(dir);
-  }
-
-  createWingTexture(colorType, isLeft) {
-    const cvs = document.createElement('canvas');
-    cvs.width = 256;
-    cvs.height = 340;
-    const ctx = cvs.getContext('2d');
-
-    const palettes = {
-      blue: { base: '#00d2ff', mid: '#0055ff', dark: '#001144', rim: '#ffffff' },
-      emerald: { base: '#00f260', mid: '#0575e6', dark: '#022e1f', rim: '#ffffff' },
-      gold: { base: '#ffd700', mid: '#ff8800', dark: '#4a2600', rim: '#ffffff' },
-      purple: { base: '#f72585', mid: '#7209b7', dark: '#240046', rim: '#ffffff' }
-    };
-    const pal = palettes[colorType] || palettes.blue;
-
-    ctx.save();
-    if (!isLeft) {
-      ctx.translate(256, 0);
-      ctx.scale(-1, 1);
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(20, 160);
-    ctx.bezierCurveTo(40, 80, 120, 20, 220, 25);
-    ctx.bezierCurveTo(250, 45, 250, 110, 210, 150);
-    ctx.bezierCurveTo(240, 190, 230, 270, 170, 310);
-    ctx.bezierCurveTo(120, 335, 70, 310, 50, 260);
-    ctx.bezierCurveTo(30, 220, 20, 180, 20, 160);
-    ctx.closePath();
-
-    const grad = ctx.createRadialGradient(80, 140, 10, 140, 160, 220);
-    grad.addColorStop(0, pal.base);
-    grad.addColorStop(0.45, pal.mid);
-    grad.addColorStop(0.85, pal.dark);
-    grad.addColorStop(1, '#050a14');
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    ctx.lineWidth = 2.5;
-    ctx.strokeStyle = 'rgba(10, 15, 30, 0.75)';
-    const veins = [
-      [[20, 160], [100, 100], [210, 40]],
-      [[20, 160], [120, 115], [225, 80]],
-      [[20, 160], [130, 145], [215, 135]],
-      [[20, 160], [120, 190], [190, 230]],
-      [[20, 160], [90, 230], [150, 290]],
-      [[20, 160], [60, 240], [90, 300]]
-    ];
-    veins.forEach(v => {
-      ctx.beginPath();
-      ctx.moveTo(v[0][0], v[0][1]);
-      ctx.quadraticCurveTo(v[1][0], v[1][1], v[2][0], v[2][1]);
-      ctx.stroke();
+    butterflies.push({
+      el: el,
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight * 0.8 + 40,
+      vx: (Math.random() > 0.5 ? 1 : -1) * (0.85 + Math.random() * 0.95),
+      vy: (Math.random() - 0.5) * 0.6,
+      scale: 0.85 + Math.random() * 0.35,
+      angle: 0,
+      phase: Math.random() * Math.PI * 2,
+      flutterFreq: 0.045 + Math.random() * 0.03
     });
-
-    ctx.lineWidth = 7;
-    ctx.strokeStyle = '#050a14';
-    ctx.stroke();
-
-    const dots = [
-      [220, 35], [235, 65], [230, 95], [215, 125],
-      [225, 180], [220, 220], [195, 265], [160, 298], [115, 320]
-    ];
-    dots.forEach(([x, y]) => {
-      ctx.beginPath();
-      ctx.arc(x, y, 3.2, 0, Math.PI * 2);
-      ctx.fillStyle = pal.rim;
-      ctx.fill();
-    });
-    ctx.restore();
-
-    const tex = new THREE.CanvasTexture(cvs);
-    tex.needsUpdate = true;
-    return tex;
   }
 
-  buildButterflies() {
-    const species = ['blue', 'emerald', 'gold', 'purple'];
-    const count = Math.min(8, Math.max(4, Math.floor(window.innerWidth / 220)));
+  function animateButterflies() {
+    if (!document.hidden) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
 
-    for (let i = 0; i < count; i++) {
-      const spType = species[i % species.length];
-      const leftTex = this.createWingTexture(spType, true);
-      const rightTex = this.createWingTexture(spType, false);
+      butterflies.forEach(b => {
+        b.phase += b.flutterFreq;
+        b.x += b.vx;
+        b.y += Math.sin(b.phase) * 2.0 + b.vy;
 
-      const group = new THREE.Group();
+        if (b.vx > 0 && b.x > w + 70) {
+          b.x = -70;
+          b.y = Math.random() * h * 0.85 + 40;
+        } else if (b.vx < 0 && b.x < -70) {
+          b.x = w + 70;
+          b.y = Math.random() * h * 0.85 + 40;
+        }
 
-      const bodyGeo = new THREE.CylinderGeometry(0.06, 0.04, 1.4, 8);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x111822, roughness: 0.6 });
-      const body = new THREE.Mesh(bodyGeo, bodyMat);
-      body.rotation.x = Math.PI / 2;
-      group.add(body);
+        if (b.y < 25) b.y = 25;
+        if (b.y > h - 80) b.y = h - 80;
 
-      const wingW = 1.4;
-      const wingH = 1.85;
-      const leftGeo = new THREE.PlaneGeometry(wingW, wingH);
-      leftGeo.translate(-wingW * 0.5, 0, 0);
-      const leftMat = new THREE.MeshStandardMaterial({
-        map: leftTex,
-        transparent: true,
-        alphaTest: 0.05,
-        side: THREE.DoubleSide,
-        roughness: 0.35
-      });
-      const leftWing = new THREE.Mesh(leftGeo, leftMat);
-      group.add(leftWing);
+        const targetAngle = b.vx > 0 ? (b.vy * 22 + Math.sin(b.phase) * 14) : (180 - (b.vy * 22 + Math.sin(b.phase) * 14));
+        b.angle += (targetAngle - b.angle) * 0.1;
 
-      const rightGeo = new THREE.PlaneGeometry(wingW, wingH);
-      rightGeo.translate(wingW * 0.5, 0, 0);
-      const rightMat = new THREE.MeshStandardMaterial({
-        map: rightTex,
-        transparent: true,
-        alphaTest: 0.05,
-        side: THREE.DoubleSide,
-        roughness: 0.35
-      });
-      const rightWing = new THREE.Mesh(rightGeo, rightMat);
-      group.add(rightWing);
-
-      const scale = 1.8 + Math.random() * 0.65;
-      group.scale.set(scale, scale, scale);
-
-      this.scene.add(group);
-
-      this.butterflies.push({
-        group: group,
-        leftWing: leftWing,
-        rightWing: rightWing,
-        x: (Math.random() - 0.5) * 36,
-        y: (Math.random() - 0.5) * 20,
-        z: (Math.random() - 0.5) * 12,
-        vx: (Math.random() > 0.5 ? 1 : -1) * (0.04 + Math.random() * 0.06),
-        vy: (Math.random() - 0.5) * 0.035,
-        vz: (Math.random() - 0.5) * 0.025,
-        flapSpeed: 14 + Math.random() * 6,
-        phase: Math.random() * Math.PI * 2
+        b.el.style.transform = `translate3d(${b.x}px, ${b.y}px, 0) rotate(${b.angle}deg) scale(${b.scale})`;
       });
     }
+    requestAnimationFrame(animateButterflies);
   }
-
-  bindEvents() {
-    window.addEventListener('resize', () => {
-      this.width = window.innerWidth;
-      this.height = window.innerHeight;
-      this.camera.aspect = this.width / this.height;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(this.width, this.height);
-    });
-  }
-
-  animate() {
-    requestAnimationFrame(this.animate);
-    const time = performance.now() * 0.001;
-
-    this.butterflies.forEach(b => {
-      b.phase += 0.028;
-      b.x += b.vx;
-      b.y += Math.sin(b.phase * 2) * 0.045 + b.vy;
-      b.z += b.vz;
-
-      if (b.x > 22) { b.x = 22; b.vx = -Math.abs(b.vx); }
-      if (b.x < -22) { b.x = -22; b.vx = Math.abs(b.vx); }
-      if (b.y > 13) { b.y = 13; b.vy = -Math.abs(b.vy); }
-      if (b.y < -13) { b.y = -13; b.vy = Math.abs(b.vy); }
-      if (b.z > 8) { b.z = 8; b.vz = -Math.abs(b.vz); }
-      if (b.z < -10) { b.z = -10; b.vz = Math.abs(b.vz); }
-
-      b.group.position.set(b.x, b.y, b.z);
-
-      const flap = Math.sin(time * b.flapSpeed) * 0.72;
-      b.leftWing.rotation.y = flap;
-      b.rightWing.rotation.y = -flap;
-
-      const heading = b.vx > 0 ? 0.35 : -0.35;
-      b.group.rotation.set(
-        -b.vy * 8 + Math.sin(b.phase) * 0.15,
-        b.vx > 0 ? 0.4 : Math.PI - 0.4,
-        heading
-      );
-    });
-
-    this.renderer.render(this.scene, this.camera);
-  }
+  requestAnimationFrame(animateButterflies);
 }
 
+// ==========================================
+// 7. EKRANIN ALTINDA DALGALI OKYANUS MOTORU
+// (Kullanıcı Talebi: Ekranın altı dalgalı okyanus, kaydıkça kaysın)
+// ==========================================
+function initOceanWaves() {
+  const ocean = document.getElementById('oceanWavesCanvas');
+  if (!ocean) return;
+  const ctx = ocean.getContext('2d');
+  let oWidth = 0, oHeight = 0;
+
+  function resizeOcean() {
+    oWidth = ocean.width = window.innerWidth;
+    oHeight = ocean.height = 190;
+  }
+  resizeOcean();
+  window.addEventListener('resize', resizeOcean);
+
+  let scrollOffset = 0;
+  window.addEventListener('scroll', () => {
+    scrollOffset = window.scrollY * 0.12;
+  });
+
+  let waveTime = 0;
+  function renderWaves() {
+    waveTime += 0.02;
+    ctx.clearRect(0, 0, oWidth, oHeight);
+
+    // Dalga 1: Derin Okyanus (Arka katman)
+    ctx.beginPath();
+    ctx.moveTo(0, oHeight);
+    for (let x = 0; x <= oWidth; x += 10) {
+      const y = 80 + Math.sin(x * 0.008 + waveTime * 0.8) * 18 + Math.cos(x * 0.004 + waveTime * 0.5) * 12 + Math.sin(scrollOffset * 0.05) * 6;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(oWidth, oHeight);
+    ctx.closePath();
+    const grad1 = ctx.createLinearGradient(0, 50, 0, oHeight);
+    grad1.addColorStop(0, 'rgba(3, 105, 161, 0.55)');
+    grad1.addColorStop(1, 'rgba(7, 24, 48, 0.95)');
+    ctx.fillStyle = grad1;
+    ctx.fill();
+
+    // Dalga 2: Orta Okyanus Akıntısı
+    ctx.beginPath();
+    ctx.moveTo(0, oHeight);
+    for (let x = 0; x <= oWidth; x += 10) {
+      const y = 100 + Math.sin(x * 0.012 - waveTime * 1.1) * 14 + Math.sin(x * 0.02 + waveTime * 1.5) * 8;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(oWidth, oHeight);
+    ctx.closePath();
+    const grad2 = ctx.createLinearGradient(0, 70, 0, oHeight);
+    grad2.addColorStop(0, 'rgba(0, 242, 254, 0.45)');
+    grad2.addColorStop(1, 'rgba(10, 37, 64, 0.95)');
+    ctx.fillStyle = grad2;
+    ctx.fill();
+
+    // Dalga 3: Ön Köpüklü Tepe Dalgası
+    ctx.beginPath();
+    ctx.moveTo(0, oHeight);
+    for (let x = 0; x <= oWidth; x += 8) {
+      const y = 115 + Math.sin(x * 0.015 + waveTime * 1.4) * 12 + Math.cos(x * 0.009 - waveTime * 0.9) * 10;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(oWidth, oHeight);
+    ctx.closePath();
+    const grad3 = ctx.createLinearGradient(0, 90, 0, oHeight);
+    grad3.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
+    grad3.addColorStop(1, 'rgba(5, 16, 30, 0.98)');
+    ctx.fillStyle = grad3;
+    ctx.fill();
+
+    // Köpük Çizgisi (Beyaz/Siyan Tepe Işıltısı)
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.beginPath();
+    for (let x = 0; x <= oWidth; x += 8) {
+      const y = 115 + Math.sin(x * 0.015 + waveTime * 1.4) * 12 + Math.cos(x * 0.009 - waveTime * 0.9) * 10;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    requestAnimationFrame(renderWaves);
+  }
+  renderWaves();
+}
 
 // ==========================================
-// 7. 3B WEBGL KAMBUR BALİNA MOTORU (THREE.JS 3D HUMPBACK WHALE & OCEAN BREACH)
+// 8. ŞİMŞEK ÇAKMASI VE GÖK GÜRÜLTÜSÜ MOTORU
+// (Kullanıcı Talebi: Arada şimşek çaksın sesli olarak)
+// ==========================================
+function triggerLightning() {
+  const overlay = document.getElementById('lightningFlashOverlay');
+  if (!overlay) return;
+
+  // Aşama 1: Ön Çakma (60ms)
+  overlay.style.opacity = '0.55';
+  setTimeout(() => {
+    overlay.style.opacity = '0.1';
+    // Aşama 2: Ana Güçlü Yıldırım (110ms)
+    setTimeout(() => {
+      overlay.style.opacity = '0.95';
+      playThunderSound();
+      setTimeout(() => {
+        overlay.style.opacity = '0.35';
+        // Aşama 3: Sönüm
+        setTimeout(() => {
+          overlay.style.opacity = '0';
+        }, 180);
+      }, 90);
+    }, 50);
+  }, 60);
+}
+
+// ==========================================
+// 9. 3B WEBGL KAMBUR BALİNA MOTORU (THREE.JS 3D HUMPBACK WHALE)
+// (Kullanıcı Talepleri: Bir tık küçük yap; burun, ağız ve gözleri gerçekçi yap)
 // ==========================================
 class WhaleThreeEngine {
   constructor(canvas) {
@@ -675,7 +727,7 @@ class WhaleThreeEngine {
     this.height = window.innerHeight;
     this.isBreaching = false;
     this.breachTime = 0;
-    this.breachDuration = 4.6; // sn
+    this.breachDuration = 4.6;
     this.hasSprayedBlowhole = false;
     this.hasImpactedWater = false;
     this.lastTime = performance.now();
@@ -756,16 +808,14 @@ class WhaleThreeEngine {
         let y = st.yOff + st.h * Math.cos(theta);
         const z = st.z;
 
+        // Ventral throat pleats
         if (Math.cos(theta) < -0.15 && u > 0.08 && u < 0.6) {
           y += Math.cos(theta * 28) * 0.06;
         }
 
-        if (u < 0.25 && Math.cos(theta) > 0.3) {
-          y += Math.sin(u * 40) * Math.cos(theta * 10) * 0.07;
-        }
-
         positions.push(x, y, z);
 
+        // Countershading
         if (Math.cos(theta) < -0.15) {
           colors.push(0.92, 0.95, 0.98);
         } else {
@@ -800,24 +850,122 @@ class WhaleThreeEngine {
     this.bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
     this.whaleGroup.add(this.bodyMesh);
 
+    // --- ANATOMİK YÜZ VE BAŞ DETAYLARI ---
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0x111c29, roughness: 0.2, metalness: 0.12 });
+    const knobMat = new THREE.MeshStandardMaterial({ color: 0x182637, roughness: 0.25, metalness: 0.1 });
+
+    // 1. Burun / Nefes Deliği Siperi (Blowhole Splash-Guard Crest & Dual Nostrils)
+    const blowholeCrestGeo = new THREE.SphereGeometry(0.35, 12, 12);
+    const blowholeCrest = new THREE.Mesh(blowholeCrestGeo, skinMat);
+    blowholeCrest.scale.set(0.85, 0.45, 1.45);
+    blowholeCrest.position.set(0, 1.48, 6.75);
+    this.whaleGroup.add(blowholeCrest);
+
+    // İkili Nefes Deliği Yarıkları
+    const nostrilMat = new THREE.MeshBasicMaterial({ color: 0x040608 });
+    const nostrilGeo = new THREE.SphereGeometry(0.08, 8, 8);
+    const nostrilL = new THREE.Mesh(nostrilGeo, nostrilMat);
+    nostrilL.scale.set(0.5, 0.3, 1.6);
+    nostrilL.position.set(0.14, 1.55, 6.8);
+    nostrilL.rotation.y = -0.15;
+    this.whaleGroup.add(nostrilL);
+
+    const nostrilR = new THREE.Mesh(nostrilGeo, nostrilMat);
+    nostrilR.scale.set(0.5, 0.3, 1.6);
+    nostrilR.position.set(-0.14, 1.55, 6.8);
+    nostrilR.rotation.y = 0.15;
+    this.whaleGroup.add(nostrilR);
+
+    // 2. Burun Sırtı Duyusal Tüberkülleri (Rostrum Tubercles / Knobs)
+    const tubercleCoords = [
+      [0, 1.32, 7.8, 0.10],
+      [0, 1.08, 8.5, 0.10],
+      [0, 0.82, 9.2, 0.09],
+      [0, 0.58, 9.8, 0.09],
+      [0, 0.32, 10.4, 0.08],
+      [0.35, 1.18, 8.0, 0.08],
+      [-0.35, 1.18, 8.0, 0.08],
+      [0.45, 0.90, 8.8, 0.08],
+      [-0.45, 0.90, 8.8, 0.08],
+      [0.40, 0.62, 9.6, 0.07],
+      [-0.40, 0.62, 9.6, 0.07]
+    ];
+    tubercleCoords.forEach(([tx, ty, tz, tr]) => {
+      const knobGeo = new THREE.SphereGeometry(tr, 8, 8);
+      const knobMesh = new THREE.Mesh(knobGeo, knobMat);
+      knobMesh.position.set(tx, ty, tz);
+      this.whaleGroup.add(knobMesh);
+    });
+
+    // 3. Ağız & Alt Çene Ucu Tüberkülü (Symphyseal Knob)
+    const chinKnobGeo = new THREE.SphereGeometry(0.18, 10, 10);
+    const chinKnobMat = new THREE.MeshStandardMaterial({ color: 0xe6eef8, roughness: 0.25, metalness: 0.1 });
+    const chinKnob = new THREE.Mesh(chinKnobGeo, chinKnobMat);
+    chinKnob.scale.set(1.1, 0.85, 1.2);
+    chinKnob.position.set(0, -0.38, 10.75);
+    this.whaleGroup.add(chinKnob);
+
+    // Alt çene kenar yumruları
+    const jawKnobs = [
+      [0.45, -0.42, 9.8, 0.08],
+      [-0.45, -0.42, 9.8, 0.08],
+      [0.85, -0.55, 8.6, 0.09],
+      [-0.85, -0.55, 8.6, 0.09],
+      [1.25, -0.70, 7.4, 0.09],
+      [-1.25, -0.70, 7.4, 0.09]
+    ];
+    jawKnobs.forEach(([jx, jy, jz, jr]) => {
+      const jKnob = new THREE.Mesh(new THREE.SphereGeometry(jr, 8, 8), chinKnobMat);
+      jKnob.position.set(jx, jy, jz);
+      this.whaleGroup.add(jKnob);
+    });
+
+    // 4. Gerçekçi Yan Gözler (Lateral Cetacean Eyes on Orbital Swells)
+    const eyeSwellGeo = new THREE.SphereGeometry(0.32, 12, 10);
+    const eyeMat = new THREE.MeshStandardMaterial({
+      color: 0x05070a,
+      roughness: 0.04,
+      metalness: 0.92
+    });
+    const glintMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+    function createEye(isLeft) {
+      const eyeGroup = new THREE.Group();
+      // Fleshy orbital swell
+      const swell = new THREE.Mesh(eyeSwellGeo, skinMat);
+      swell.scale.set(0.45, 0.85, 1.15);
+      eyeGroup.add(swell);
+
+      // Glossy obsidian eyeball
+      const eyeball = new THREE.Mesh(new THREE.SphereGeometry(0.13, 14, 14), eyeMat);
+      eyeball.position.set(isLeft ? 0.12 : -0.12, 0.02, 0.02);
+      eyeGroup.add(eyeball);
+
+      // Corneal specular glint
+      const glint = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 6), glintMat);
+      glint.position.set(isLeft ? 0.22 : -0.22, 0.07, 0.05);
+      eyeGroup.add(glint);
+
+      eyeGroup.position.set(isLeft ? 2.18 : -2.18, 0.32, 5.55);
+      return eyeGroup;
+    }
+
+    this.leftEye = createEye(true);
+    this.rightEye = createEye(false);
+    this.whaleGroup.add(this.leftEye);
+    this.whaleGroup.add(this.rightEye);
+
+    // --- GÖĞÜS YÜZGEÇLERİ (PECTORAL FLIPPERS) ---
     function createFlipper(isLeft) {
-      const flipperShape = new THREE.Shape();
-      flipperShape.moveTo(0, 0);
-      flipperShape.bezierCurveTo(2.5, 0.4, 7.0, -1.2, 9.5, -3.8);
-      flipperShape.bezierCurveTo(8.5, -4.2, 5.0, -3.2, 3.0, -2.2);
-      flipperShape.bezierCurveTo(1.5, -1.5, 0.5, -0.8, 0, 0);
+      const shape = new THREE.Shape();
+      shape.moveTo(0, 0);
+      shape.bezierCurveTo(2.5, 0.4, 7.0, -1.2, 9.5, -3.8);
+      shape.bezierCurveTo(8.5, -4.2, 5.0, -3.2, 3.0, -2.2);
+      shape.bezierCurveTo(1.5, -1.5, 0.5, -0.8, 0, 0);
 
-      const extrudeSettings = { depth: 0.25, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.1, bevelThickness: 0.1 };
-      const flipperGeo = new THREE.ExtrudeGeometry(flipperShape, extrudeSettings);
-      flipperGeo.computeVertexNormals();
-
-      const flipperMat = new THREE.MeshStandardMaterial({
-        color: isLeft ? 0x111c29 : 0x132030,
-        roughness: 0.2,
-        metalness: 0.12
-      });
-
-      const mesh = new THREE.Mesh(flipperGeo, flipperMat);
+      const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.25, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.1, bevelThickness: 0.1 });
+      geo.computeVertexNormals();
+      const mesh = new THREE.Mesh(geo, skinMat);
       const group = new THREE.Group();
       group.add(mesh);
       group.position.set(isLeft ? 3.2 : -3.2, -0.8, 3.2);
@@ -835,6 +983,7 @@ class WhaleThreeEngine {
     this.whaleGroup.add(this.leftFlipper);
     this.whaleGroup.add(this.rightFlipper);
 
+    // --- KUYRUK YÜZGECİ (TAIL FLUKES) ---
     const flukeShape = new THREE.Shape();
     flukeShape.moveTo(0, 0);
     flukeShape.bezierCurveTo(2.5, 0.3, 5.2, 0.8, 6.8, 1.8);
@@ -846,8 +995,7 @@ class WhaleThreeEngine {
 
     const flukeGeo = new THREE.ExtrudeGeometry(flukeShape, { depth: 0.18, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.08, bevelThickness: 0.08 });
     flukeGeo.computeVertexNormals();
-    const flukeMat = new THREE.MeshStandardMaterial({ color: 0x0f1822, roughness: 0.2, metalness: 0.12 });
-    const flukeMesh = new THREE.Mesh(flukeGeo, flukeMat);
+    const flukeMesh = new THREE.Mesh(flukeGeo, skinMat);
 
     this.tailGroup = new THREE.Group();
     this.tailGroup.position.set(0, 0.1, -12);
@@ -855,19 +1003,21 @@ class WhaleThreeEngine {
     this.tailGroup.add(flukeMesh);
     this.whaleGroup.add(this.tailGroup);
 
+    // --- SIRT YÜZGECİ (DORSAL FIN) ---
     const dorsalShape = new THREE.Shape();
     dorsalShape.moveTo(0, 0);
     dorsalShape.bezierCurveTo(0.2, 0.8, 0.6, 1.3, 0.4, 1.5);
     dorsalShape.bezierCurveTo(0.1, 1.2, -0.5, 0.4, -1.4, 0);
     dorsalShape.closePath();
     const dorsalGeo = new THREE.ExtrudeGeometry(dorsalShape, { depth: 0.12, bevelEnabled: true, bevelSegments: 1, steps: 1, bevelSize: 0.04, bevelThickness: 0.04 });
-    const dorsalMesh = new THREE.Mesh(dorsalGeo, flukeMat);
+    const dorsalMesh = new THREE.Mesh(dorsalGeo, skinMat);
     dorsalMesh.position.set(0, 1.9, -5.5);
     dorsalMesh.rotation.y = Math.PI / 2;
     this.whaleGroup.add(dorsalMesh);
 
+    // Bir tık küçük, zarif ve çevik ölçek (Kullanıcı talebi: scale 0.92)
+    this.whaleGroup.scale.set(0.92, 0.92, 0.92);
     this.whaleGroup.position.set(-25, -30, -5);
-    this.whaleGroup.scale.set(1.35, 1.35, 1.35);
     this.scene.add(this.whaleGroup);
   }
 
@@ -1060,9 +1210,9 @@ class WhaleThreeEngine {
   }
 }
 
-
 // ==========================================
-// 8. GERÇEKÇİ OPTİK CAM ISLANMASI & SU DAMLALARI (RAINYDAY.JS + LENS MIST)
+// 10. GERÇEKÇİ OPTİK CAM ISLANMASI & SU DAMLALARI
+// (RainyDay.js + Fiziksel Su Lensi Damlaları & Yoğuşma Sisi)
 // ==========================================
 let rainyEngine = null;
 let isRainActive = false;
@@ -1120,8 +1270,8 @@ function initRainyDay() {
 function triggerRealWaterSplash() {
   splashMistAlpha = 0.70;
 
-  // 1. Ekranın Tamamına Dağılan 95 Adet Fiziksel Sıvı Cam Damlası
-  const count = 95;
+  // 1. Ekranın Tamamına Dağılan 110 Adet Fiziksel Sıvı Cam Damlası
+  const count = 110;
   const w = window.innerWidth;
   const h = window.innerHeight;
 
@@ -1246,60 +1396,66 @@ function renderScreenMist() {
   requestAnimationFrame(renderScreenMist);
 }
 
-
 // ==========================================
-// 9. BAŞLATICI & ETKİLEŞİMLİ BUTONLAR
+// 11. BAŞLATICI & ETKİLEŞİMLİ BUTONLAR
 // ==========================================
 let whaleEngineInstance = null;
-let butterflyEngineInstance = null;
 
-function startAllSystems() {
+function startAllEngines() {
   initLanguage();
   initScreenshotsAndLightbox();
-  initCopyActions();
   initMythicBgCanvas();
-
   initSplashCanvas();
   renderScreenMist();
   initRainyDay();
+  initPhotographicButterflies();
+  initOceanWaves();
 
   const whaleCanvas = document.getElementById('whaleThreeCanvas');
   if (whaleCanvas && typeof THREE !== 'undefined' && !whaleEngineInstance) {
     whaleEngineInstance = new WhaleThreeEngine(whaleCanvas);
+    window.whaleEngineInstance = whaleEngineInstance;
   }
+  window.triggerRealWaterSplash = triggerRealWaterSplash;
+  window.triggerLightning = triggerLightning;
 
-  const butterflyCanvas = document.getElementById('butterflyThreeCanvas');
-  if (butterflyCanvas && typeof THREE !== 'undefined' && !butterflyEngineInstance) {
-    butterflyEngineInstance = new ButterfliesThreeEngine(butterflyCanvas);
-  }
-
+  // Balinayı Çağır Butonu
   const summonBtn = document.getElementById('summonWhaleBtn');
   if (summonBtn) {
     summonBtn.addEventListener('click', (e) => {
       e.preventDefault();
       initAudio();
+      triggerLightning();
       if (whaleEngineInstance) {
         whaleEngineInstance.triggerBreach();
-        showToast('🌊 Kambur balina atladı, ekranınız sırılsıklam oldu! 🐋');
       }
     });
   }
 
+  // Sayfa açıldıktan 1.2 saniye sonra ilk görkemli atlayış
   setTimeout(() => {
     if (whaleEngineInstance && !document.hidden) {
       whaleEngineInstance.triggerBreach();
     }
-  }, 3500);
+  }, 1200);
 
+  // Periyodik Atlama (Her 30 saniyede bir)
   setInterval(() => {
     if (whaleEngineInstance && !document.hidden && !whaleEngineInstance.isBreaching) {
       whaleEngineInstance.triggerBreach();
     }
-  }, 28000);
+  }, 30000);
+
+  // Periyodik Şimşek & Gök Gürültüsü (Her 26 saniyede bir)
+  setInterval(() => {
+    if (!document.hidden) {
+      triggerLightning();
+    }
+  }, 26000);
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', startAllSystems);
+  document.addEventListener('DOMContentLoaded', startAllEngines);
 } else {
-  startAllSystems();
+  startAllEngines();
 }
