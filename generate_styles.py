@@ -4,17 +4,18 @@ import os
 BASE_DIR = r"C:\Users\pc\.gemini\antigravity\scratch\alef-privacy-site"
 
 css_content = """/* ==========================================================================
-   ALΣF (ALEF) - Modern Karanlık Tema ve Tasarım Sistemi
+   ALΣF (ALEF) - Fantastik, Mitolojik & Modern Karanlık Tema Sistemi
    Geliştirici & Yazar: Sertan Çubukcu (sertancubukcu@gmail.com)
    ========================================================================== */
 
 :root {
   --bg-primary: #07080e;
   --bg-secondary: #0d0f18;
-  --bg-card: rgba(17, 20, 32, 0.82);
-  --bg-card-hover: rgba(24, 28, 46, 0.94);
-  --bg-glass: rgba(13, 15, 26, 0.7);
+  --bg-card: rgba(17, 20, 32, 0.85);
+  --bg-card-hover: rgba(24, 28, 46, 0.95);
+  --bg-glass: rgba(13, 15, 26, 0.72);
 
+  /* Renkler: Energon, Truffula & Millennium Paleti */
   --color-purple: #a855f7;
   --color-purple-light: #c084fc;
   --color-blue: #3b82f6;
@@ -25,11 +26,18 @@ css_content = """/* ============================================================
   --color-emerald-light: #34d399;
   --color-amber: #f59e0b;
   --color-orange: #f97316;
+  --color-gold: #ffd700;
+  --color-gold-light: #ffe57f;
+  --color-energon: #00f2fe;
+  --color-truffula: #ff3399;
 
   --gradient-tri: linear-gradient(135deg, #a855f7 0%, #3b82f6 50%, #10b981 100%);
   --gradient-purple-blue: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
   --gradient-blue-cyan: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
   --gradient-orange-amber: linear-gradient(135deg, #f97316 0%, #f59e0b 100%);
+  --gradient-mythic: linear-gradient(135deg, #7928ca 0%, #2b59ff 48%, #00f2fe 100%);
+  --gradient-millennium: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+  --gradient-energon: linear-gradient(135deg, #0575e6 0%, #00f260 100%);
 
   --text-main: #f8fafc;
   --text-secondary: #cbd5e1;
@@ -43,6 +51,7 @@ css_content = """/* ============================================================
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
   --shadow-glow: 0 0 25px rgba(168, 85, 247, 0.35);
+  --shadow-energon: 0 0 20px rgba(0, 242, 254, 0.4);
 
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -60,15 +69,21 @@ css_content = """/* ============================================================
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent; /* Mobilde tuş parlamasını ve titremesini engeller */
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 85px; /* Gezinme bağlantılarına tıklandığında hedefin yapışkan başlık altına girmesini ve titremeyi 100% önler */
   font-size: 16px;
   background-color: var(--bg-primary);
   color: var(--text-main);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+section[id], .section[id], div[id] {
+  scroll-margin-top: 85px;
 }
 
 body {
@@ -81,7 +96,18 @@ body {
   min-height: 100vh;
 }
 
-/* Nano Banana Statik Zarif Arka Plan */
+/* ================= Animasyonlu Rengârenk Arka Plan Tuvali (Canvas) ================= */
+#mythicBgCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -2;
+  opacity: 0.85;
+}
+
+/* Nano Banana Statik Destek Katmanı */
 body::before {
   content: "";
   position: fixed;
@@ -90,9 +116,9 @@ body::before {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
-  opacity: 0.18;
+  opacity: 0.16;
   pointer-events: none;
-  z-index: -2;
+  z-index: -3;
 }
 
 .container {
@@ -107,7 +133,7 @@ body::before {
   text-justify: inter-word;
 }
 
-/* ================= Arka Plan Parlama Efektleri ================= */
+/* ================= Arka Plan Parlama Küreleri ================= */
 .orb {
   position: fixed;
   border-radius: 50%;
@@ -139,7 +165,7 @@ body::before {
   left: 20%;
 }
 
-/* ================= Üst Gezinme Çubuğu (Navbar - Titreme Önleyici Sabit Yapı) ================= */
+/* ================= Üst Gezinme Çubuğu (Navbar - KESİNLİKLE TİTREMEZ) ================= */
 .site-header {
   position: sticky;
   top: 0;
@@ -147,10 +173,11 @@ body::before {
   background: rgba(7, 8, 14, 0.95);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid rgba(168, 85, 247, 0.25);
   padding: 10px 0;
-  transition: background-color 0.2s ease;
-  transform: translateZ(0); /* Titremeyi engeller */
+  transform: translateZ(0); /* Donanım ivmelendirmesi: Titremeyi 100% yok eder */
+  backface-visibility: hidden;
+  contain: layout paint;
 }
 
 .nav-wrapper {
@@ -212,12 +239,12 @@ body::before {
   line-height: 1 !important;
   color: #fff !important;
   display: inline !important;
-  white-space: nowrap !important;   /* F harfinin aşağı kaymasını 100% önler */
+  white-space: nowrap !important;   /* F harfinin aşağı kaymasını 100% engeller */
   word-break: keep-all !important;  /* Kelime asla bölünmez */
   overflow-wrap: normal !important;
 }
 
-/* Sigma Tipografisi - Satır içi / Inline (F harfini kesinlikle korur) */
+/* Sigma Tipografisi - Satır içi / Inline (F harfini korur) */
 .sigma {
   font-family: 'Times New Roman', 'Georgia', serif;
   font-weight: 800;
@@ -229,7 +256,7 @@ body::before {
   margin: 0;
 }
 
-/* Gezinme Bağlantıları - Titremeyi Önlemek İçin Sabit Boyut ve Şeffaf Çerçeve */
+/* Gezinme Bağlantıları - Titremeyi Önlemek İçin Sabit Kutu ve Şeffaf Çerçeve */
 .nav-links {
   display: flex;
   align-items: center;
@@ -241,21 +268,33 @@ body::before {
   color: var(--text-secondary);
   text-decoration: none;
   font-size: 0.86rem;
-  font-weight: 500;
-  padding: 6px 10px;
+  font-weight: 600;
+  padding: 6px 12px;
   border-radius: var(--radius-sm);
-  border: 1px solid transparent; /* Titremeyi engelleyen kritik kural */
-  transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+  border: 1.5px solid transparent !important; /* Çerçeve kalınlığı sabit: asla titremez */
+  transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
   white-space: nowrap;
-  display: inline-block;
-  line-height: 1.3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.25;
+  touch-action: manipulation;
+  will-change: background-color, border-color;
+  transform: translateZ(0);
 }
 
 .nav-links a:hover,
 .nav-links a.active {
   color: #fff;
-  background: rgba(168, 85, 247, 0.15);
-  border-color: rgba(168, 85, 247, 0.35);
+  background: rgba(168, 85, 247, 0.18);
+  border-color: rgba(168, 85, 247, 0.45) !important;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+}
+
+.nav-links a:focus,
+.nav-links a:active {
+  outline: none !important;
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.45);
 }
 
 .lang-switcher-wrap {
@@ -267,7 +306,7 @@ body::before {
 .lang-switcher {
   display: inline-flex;
   background: #111422;
-  border: 1px solid var(--border-medium);
+  border: 1.5px solid rgba(168, 85, 247, 0.3);
   border-radius: var(--radius-full);
   padding: 2px;
   gap: 2px;
@@ -275,7 +314,7 @@ body::before {
 
 .lang-btn {
   background: transparent;
-  border: 1px solid transparent;
+  border: 1.5px solid transparent !important;
   color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 600;
@@ -284,13 +323,15 @@ body::before {
   cursor: pointer;
   transition: background-color 0.18s ease, color 0.18s ease;
   line-height: 1.2;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .lang-btn.active {
   background: var(--gradient-tri);
   color: #ffffff;
   border-color: transparent;
-  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4);
+  box-shadow: 0 2px 10px rgba(168, 85, 247, 0.5);
 }
 
 .lang-btn:hover:not(.active) {
@@ -298,88 +339,316 @@ body::before {
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* ================= Butonlar ================= */
+/* ================= FANTASTİK & MİTOLOJİK BUTONLAR (TRANSFORMERS / YUGIOH / LORAX) ================= */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   font-family: var(--font-heading);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.92rem;
-  padding: 10px 20px;
+  padding: 10px 22px;
   border-radius: var(--radius-md);
   text-decoration: none;
   cursor: pointer;
-  transition: var(--transition);
-  border: 1px solid transparent;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1.5px solid transparent;
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0.3px;
 }
 
+/* Mitolojik Rune & Energon Butonu */
 .btn-primary {
-  background: var(--gradient-purple-blue);
+  background: var(--gradient-mythic);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.35);
+  border-color: rgba(0, 242, 254, 0.5);
+  box-shadow: 0 4px 20px rgba(43, 89, 255, 0.45), inset 0 0 12px rgba(0, 242, 254, 0.3);
 }
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 22px rgba(168, 85, 247, 0.5);
+  transform: translateY(-2px) scale(1.02);
+  border-color: #00f2fe;
+  box-shadow: 0 6px 26px rgba(0, 242, 254, 0.6), inset 0 0 16px rgba(255, 255, 255, 0.5);
   color: #fff;
 }
 
+/* Yeşil Energon Kalkanı Butonu */
 .btn-green {
-  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  background: var(--gradient-energon);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+  border-color: rgba(0, 242, 96, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 242, 96, 0.4), inset 0 0 12px rgba(0, 242, 96, 0.25);
 }
 .btn-green:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 22px rgba(16, 185, 129, 0.5);
+  transform: translateY(-2px) scale(1.02);
+  border-color: #00f260;
+  box-shadow: 0 6px 26px rgba(0, 242, 96, 0.65), inset 0 0 16px rgba(255, 255, 255, 0.5);
   color: #fff;
 }
 
+/* Yu-Gi-Oh Millennium Altın Hazine Butonu */
 .btn-store {
-  background: var(--gradient-orange-amber);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.35);
+  background: var(--gradient-millennium);
+  color: #1a0f00 !important;
+  font-weight: 800;
+  border-color: #ffd700;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.45), inset 0 0 14px rgba(255, 255, 255, 0.6);
+  text-shadow: none;
 }
 .btn-store:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 22px rgba(249, 115, 22, 0.5);
-  color: #fff;
+  transform: translateY(-2px) scale(1.02);
+  border-color: #fff;
+  box-shadow: 0 6px 28px rgba(255, 215, 0, 0.75), inset 0 0 18px rgba(255, 255, 255, 0.8);
+  color: #000 !important;
 }
 
+/* Kristal Cam Buton */
 .btn-outline {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(17, 20, 36, 0.75);
   color: var(--text-main);
-  border-color: var(--border-medium);
+  border-color: rgba(168, 85, 247, 0.35);
+  box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.15);
 }
 .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(168, 85, 247, 0.2);
   border-color: var(--color-purple);
+  box-shadow: 0 4px 18px rgba(168, 85, 247, 0.4);
   color: #fff;
 }
 
 .btn-copy {
   background: #141829;
   color: var(--color-cyan-light);
-  border-color: rgba(6, 182, 212, 0.3);
+  border-color: rgba(6, 182, 212, 0.4);
 }
 .btn-copy:hover {
-  background: rgba(6, 182, 212, 0.15);
+  background: rgba(6, 182, 212, 0.2);
   border-color: var(--color-cyan);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
 }
 
 .btn-bionluk {
   background: #ff5722;
   color: #fff;
-  font-weight: 700;
-  box-shadow: 0 4px 18px rgba(255, 87, 34, 0.4);
+  font-weight: 800;
+  box-shadow: 0 4px 20px rgba(255, 87, 34, 0.45);
 }
 .btn-bionluk:hover {
   background: #f4511e;
   transform: translateY(-2px);
+  box-shadow: 0 6px 26px rgba(255, 87, 34, 0.65);
   color: #fff;
+}
+
+/* ================= KELEBEKLER (BUTTERFLIES SYSTEM) ================= */
+#butterflyContainer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+}
+
+.butterfly {
+  position: absolute;
+  width: 28px;
+  height: 24px;
+  pointer-events: none;
+  will-change: transform, left, top;
+}
+
+.butterfly .wings {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.butterfly .wing {
+  position: absolute;
+  top: 0;
+  width: 14px;
+  height: 22px;
+  border-radius: 50% 50% 20% 50%;
+  transform-origin: right center;
+  animation: flapWings 0.28s infinite alternate ease-in-out;
+}
+
+.butterfly .wing-left {
+  left: 0;
+  transform-origin: right center;
+}
+
+.butterfly .wing-right {
+  right: 0;
+  border-radius: 50% 50% 50% 20%;
+  transform-origin: left center;
+  animation: flapWingsRight 0.28s infinite alternate ease-in-out;
+}
+
+/* Kelebek Renk Çeşitleri (Lorax & Energon Tonları) */
+.butterfly.purple .wing {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.85) 0%, rgba(236, 72, 153, 0.7) 100%);
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+}
+.butterfly.cyan .wing {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.85) 0%, rgba(59, 130, 246, 0.7) 100%);
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+}
+.butterfly.gold .wing {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.85) 0%, rgba(249, 115, 22, 0.7) 100%);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+.butterfly.truffula .wing {
+  background: linear-gradient(135deg, rgba(255, 51, 153, 0.85) 0%, rgba(16, 185, 129, 0.7) 100%);
+  box-shadow: 0 0 10px rgba(255, 51, 153, 0.8);
+}
+
+@keyframes flapWings {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(70deg); }
+}
+
+@keyframes flapWingsRight {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(-70deg); }
+}
+
+/* ================= ZIPLAYAN SU SIÇRATAN BALİNA (BREACHING WHALE) ================= */
+#whaleContainer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 380px;
+  pointer-events: none;
+  z-index: 40;
+  overflow: hidden;
+}
+
+.whale-actor {
+  position: absolute;
+  bottom: -180px;
+  left: -200px;
+  width: 220px;
+  height: 140px;
+  will-change: transform, opacity;
+  opacity: 0;
+}
+
+/* Balina Atlama Animasyonu */
+.whale-actor.jumping {
+  animation: whaleBreach 4.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+@keyframes whaleBreach {
+  0% {
+    left: 8%;
+    bottom: -150px;
+    transform: rotate(-35deg) scale(0.7);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+    transform: rotate(-25deg) scale(0.9);
+  }
+  45% {
+    bottom: 180px;
+    transform: rotate(15deg) scale(1.15);
+  }
+  60% {
+    bottom: 210px;
+    transform: rotate(35deg) scale(1.2);
+    opacity: 1;
+  }
+  85% {
+    bottom: -100px;
+    transform: rotate(70deg) scale(0.95);
+    opacity: 0.9;
+  }
+  100% {
+    left: 78%;
+    bottom: -180px;
+    transform: rotate(85deg) scale(0.7);
+    opacity: 0;
+  }
+}
+
+/* Su Sıçratma Parçacıkları (Water Splash Droplets) */
+.splash-droplet {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #22d3ee 0%, #3b82f6 80%);
+  box-shadow: 0 0 8px #22d3ee;
+  pointer-events: none;
+  animation: dropletBurst 1.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes dropletBurst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* Su Dalga Halkası */
+.water-ring {
+  position: absolute;
+  bottom: 10px;
+  width: 20px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid rgba(34, 211, 238, 0.8);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.6);
+  pointer-events: none;
+  animation: ringExpand 1.4s ease-out forwards;
+}
+
+@keyframes ringExpand {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(8);
+    opacity: 0;
+  }
+}
+
+/* Balina Çağırma Düğmesi (Sağ Altta Fantastik Buton) */
+.whale-trigger-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 99;
+  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 114, 255, 0.5);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.whale-trigger-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 24px rgba(0, 198, 255, 0.7);
 }
 
 /* ================= Giriş (Hero) Bölümü ================= */
@@ -393,7 +662,7 @@ body::before {
   align-items: center;
   gap: 8px;
   background: rgba(168, 85, 247, 0.12);
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  border: 1px solid rgba(168, 85, 247, 0.35);
   color: var(--color-purple-light);
   padding: 6px 14px;
   border-radius: var(--radius-full);
@@ -404,7 +673,7 @@ body::before {
 
 .badge-green {
   background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.3);
+  border-color: rgba(16, 185, 129, 0.35);
   color: var(--color-emerald-light);
 }
 
@@ -513,7 +782,7 @@ body::before {
 .app-card:hover {
   transform: translateY(-4px);
   border-color: var(--color-purple);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
 }
 
 .app-card:hover::before {
@@ -573,7 +842,7 @@ body::before {
   margin-top: auto;
 }
 
-/* ================= KÜÇÜK ÇERÇEVELİ EKRAN GÖRÜNTÜLERİ (CRITICAL REQUEST) ================= */
+/* ================= KÜÇÜK ÇERÇEVELİ EKRAN GÖRÜNTÜLERİ ================= */
 .screenshots-section {
   margin: 50px 0 70px;
 }
@@ -588,7 +857,7 @@ body::before {
   height: 40px;
   border-radius: 50%;
   background: #151824;
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid rgba(168, 85, 247, 0.3);
   color: var(--text-main);
   font-size: 1.1rem;
   display: flex;
@@ -633,9 +902,9 @@ body::before {
   border-radius: 6px;
 }
 
-/* Küçük Kompakt Telefon Çerçevesi (Kullanıcı Talebi: Küçük çerçevelere koy, oradan büyütsünler) */
+/* Küçük Kompakt Telefon Çerçevesi (Kullanıcı İsteği: Küçük çerçeveler, oradan büyütme) */
 .phone-mockup {
-  flex: 0 0 150px; /* Küçük kompakt çerçeve */
+  flex: 0 0 150px; /* Küçük çerçeve */
   scroll-snap-align: start;
   background: #111420;
   border-radius: 20px;
@@ -650,7 +919,7 @@ body::before {
 }
 
 .phone-mockup:hover {
-  transform: translateY(-6px) scale(1.04);
+  transform: translateY(-6px) scale(1.05);
   border-color: var(--color-cyan);
   box-shadow: 0 14px 30px rgba(6, 182, 212, 0.4);
 }
@@ -674,6 +943,33 @@ body::before {
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.phone-screen::after {
+  content: '🔍 Büyüt';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(9, 11, 20, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 3px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  opacity: 0.8;
+  pointer-events: none;
+  transition: all 0.22s ease;
+  z-index: 2;
+}
+
+.phone-mockup:hover .phone-screen::after {
+  opacity: 1;
+  background: rgba(6, 182, 212, 0.9);
+  border-color: #22d3ee;
+  transform: scale(1.06);
 }
 
 .phone-overlay {
@@ -1339,6 +1635,13 @@ body::before {
   .hero-title {
     font-size: 2.1rem;
   }
+  
+  .whale-trigger-btn {
+    bottom: 16px;
+    left: 16px;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1367,4 +1670,4 @@ body::before {
 with open(os.path.join(BASE_DIR, "styles.css"), "w", encoding="utf-8") as f:
     f.write(css_content)
 
-print("styles.css generated with jitter-free navbar and compact screenshot frames!")
+print("styles.css updated with animated background, butterflies, breaching whale, and mythic buttons!")
