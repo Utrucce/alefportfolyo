@@ -6,9 +6,9 @@
 :root {
   --bg-primary: #07080e;
   --bg-secondary: #0d0f18;
-  --bg-card: rgba(17, 20, 32, 0.75);
-  --bg-card-hover: rgba(24, 28, 46, 0.9);
-  --bg-glass: rgba(13, 15, 26, 0.65);
+  --bg-card: rgba(17, 20, 32, 0.82);
+  --bg-card-hover: rgba(24, 28, 46, 0.94);
+  --bg-glass: rgba(13, 15, 26, 0.7);
 
   --color-purple: #a855f7;
   --color-purple-light: #c084fc;
@@ -45,7 +45,7 @@
   --radius-xl: 28px;
   --radius-full: 9999px;
 
-  --transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -76,6 +76,20 @@ body {
   min-height: 100vh;
 }
 
+/* Nano Banana Statik Zarif Arka Plan */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url('assets/site_bg_nano.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: -2;
+}
+
 .container {
   width: 100%;
   max-width: 1240px;
@@ -95,7 +109,7 @@ body {
   filter: blur(140px);
   pointer-events: none;
   z-index: -1;
-  opacity: 0.35;
+  opacity: 0.32;
   will-change: transform;
 }
 .orb-1 {
@@ -120,17 +134,18 @@ body {
   left: 20%;
 }
 
-/* ================= Üst Gezinme Çubuğu (Navbar) ================= */
+/* ================= Üst Gezinme Çubuğu (Navbar - Titreme Önleyici Sabit Yapı) ================= */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(7, 8, 14, 0.94);
+  background: rgba(7, 8, 14, 0.95);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border-subtle);
   padding: 10px 0;
-  transition: var(--transition);
+  transition: background-color 0.2s ease;
+  transform: translateZ(0); /* Titremeyi engeller */
 }
 
 .nav-wrapper {
@@ -139,24 +154,28 @@ body {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: nowrap;
+  min-height: 44px;
 }
 
+/* ALEF Marka ve Logo Alanı - ASLA BÖLÜNMEZ, TEK SATIR (CRITICAL FIX) */
 .brand-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: var(--text-main);
-  flex-shrink: 0;
-  margin: 0;
-  padding: 0;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-decoration: none !important;
+  color: var(--text-main) !important;
+  flex-shrink: 0 !important;
+  min-width: max-content !important;
+  white-space: nowrap !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .brand-logos {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
 }
 
 .nav-logo-thumb {
@@ -167,30 +186,49 @@ body {
   border: 1px solid var(--border-subtle);
   background: #000;
   display: block;
+  flex-shrink: 0;
 }
 
 .brand-text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  white-space: nowrap;
+  display: inline-flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  min-width: max-content !important;
 }
 
 .brand-text h1 {
-  font-family: var(--font-heading);
-  font-size: 1.35rem;
-  font-weight: 800;
-  margin: 0;
-  padding: 0;
-  letter-spacing: 0.5px;
-  line-height: 1;
-  color: #fff;
+  font-family: var(--font-heading) !important;
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  letter-spacing: 0.5px !important;
+  line-height: 1 !important;
+  color: #fff !important;
+  display: inline !important;
+  white-space: nowrap !important;   /* F harfinin aşağı kaymasını 100% önler */
+  word-break: keep-all !important;  /* Kelime asla bölünmez */
+  overflow-wrap: normal !important;
 }
 
+/* Sigma Tipografisi - Satır içi / Inline (F harfini kesinlikle korur) */
+.sigma {
+  font-family: 'Times New Roman', 'Georgia', serif;
+  font-weight: 800;
+  background: var(--gradient-tri);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline !important; /* inline-block yerine inline */
+  padding: 0;
+  margin: 0;
+}
+
+/* Gezinme Bağlantıları - Titremeyi Önlemek İçin Sabit Boyut ve Şeffaf Çerçeve */
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
 }
 
@@ -201,15 +239,18 @@ body {
   font-weight: 500;
   padding: 6px 10px;
   border-radius: var(--radius-sm);
-  transition: var(--transition);
+  border: 1px solid transparent; /* Titremeyi engelleyen kritik kural */
+  transition: color 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
   white-space: nowrap;
+  display: inline-block;
+  line-height: 1.3;
 }
 
 .nav-links a:hover,
 .nav-links a.active {
   color: #fff;
   background: rgba(168, 85, 247, 0.15);
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-color: rgba(168, 85, 247, 0.35);
 }
 
 .lang-switcher-wrap {
@@ -223,42 +264,33 @@ body {
   background: #111422;
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-full);
-  padding: 3px;
+  padding: 2px;
   gap: 2px;
 }
 
 .lang-btn {
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   color: var(--text-muted);
   font-size: 0.78rem;
   font-weight: 600;
   padding: 5px 12px;
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: var(--transition);
+  transition: background-color 0.18s ease, color 0.18s ease;
+  line-height: 1.2;
 }
 
 .lang-btn.active {
   background: var(--gradient-tri);
   color: #ffffff;
+  border-color: transparent;
   box-shadow: 0 2px 8px rgba(168, 85, 247, 0.4);
 }
 
 .lang-btn:hover:not(.active) {
   color: #fff;
   background: rgba(255, 255, 255, 0.05);
-}
-
-/* ================= Sigma Tipografisi ================= */
-.sigma {
-  font-family: 'Times New Roman', 'Georgia', serif;
-  font-weight: 800;
-  background: var(--gradient-tri);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-  padding: 0 1px;
 }
 
 /* ================= Butonlar ================= */
@@ -529,25 +561,6 @@ body {
   margin-bottom: 16px;
 }
 
-.app-features {
-  list-style: none;
-  margin-bottom: 18px;
-}
-
-.app-features li {
-  font-size: 0.86rem;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-
-.app-features li svg {
-  color: var(--color-emerald-light);
-  flex-shrink: 0;
-}
-
 .app-actions {
   display: flex;
   align-items: center;
@@ -555,7 +568,7 @@ body {
   margin-top: auto;
 }
 
-/* ================= Ekran Görüntüleri Kaydırma Rayı (Carousel) ================= */
+/* ================= KÜÇÜK ÇERÇEVELİ EKRAN GÖRÜNTÜLERİ (CRITICAL REQUEST) ================= */
 .screenshots-section {
   margin: 50px 0 70px;
 }
@@ -566,13 +579,13 @@ body {
 }
 
 .carousel-arrow {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: #151824;
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -590,11 +603,11 @@ body {
 .carousel-track,
 .screenshot-track {
   display: flex;
-  gap: 20px;
+  gap: 14px;
   overflow-x: auto;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
-  padding: 12px 6px 28px;
+  padding: 10px 4px 22px;
   scrollbar-width: thin;
   scrollbar-color: var(--color-purple) #151824;
   -webkit-overflow-scrolling: touch;
@@ -602,46 +615,48 @@ body {
 
 .carousel-track::-webkit-scrollbar,
 .screenshot-track::-webkit-scrollbar {
-  height: 8px;
+  height: 6px;
 }
 .carousel-track::-webkit-scrollbar-track,
 .screenshot-track::-webkit-scrollbar-track {
   background: #111420;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 .carousel-track::-webkit-scrollbar-thumb,
 .screenshot-track::-webkit-scrollbar-thumb {
   background: var(--gradient-tri);
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
+/* Küçük Kompakt Telefon Çerçevesi (Kullanıcı Talebi: Küçük çerçevelere koy, oradan büyütsünler) */
 .phone-mockup {
-  flex: 0 0 250px;
+  flex: 0 0 150px; /* Küçük kompakt çerçeve */
   scroll-snap-align: start;
   background: #111420;
-  border-radius: 30px;
-  padding: 10px;
-  border: 2px solid rgba(168, 85, 247, 0.4);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(168, 85, 247, 0.2);
+  border-radius: 20px;
+  padding: 6px;
+  border: 1.5px solid rgba(168, 85, 247, 0.4);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
   position: relative;
   transition: var(--transition);
   cursor: pointer;
   overflow: hidden;
+  user-select: none;
 }
 
 .phone-mockup:hover {
-  transform: translateY(-8px) scale(1.02);
-  border-color: var(--color-blue-light);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 0 30px rgba(14, 165, 233, 0.4);
+  transform: translateY(-6px) scale(1.04);
+  border-color: var(--color-cyan);
+  box-shadow: 0 14px 30px rgba(6, 182, 212, 0.4);
 }
 
 .phone-screen,
 .phone-screen-wrap {
-  border-radius: 20px;
+  border-radius: 14px;
   overflow: hidden;
   position: relative;
   width: 100%;
-  height: 440px; /* SABİT YÜKSEKLİK - ASLA ÇÖKMEZ / COLLAPSE ETMEZ */
+  height: 265px; /* Küçük çerçeve boyutu */
   background: #000;
   display: flex;
   align-items: center;
@@ -659,11 +674,13 @@ body {
 .phone-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(9, 10, 16, 0.92) 0%, transparent 60%);
+  background: linear-gradient(to top, rgba(9, 10, 16, 0.95) 0%, rgba(9, 10, 16, 0.2) 60%, transparent 100%);
   opacity: 0;
   display: flex;
-  align-items: flex-end;
-  padding: 16px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 6px;
   transition: var(--transition);
 }
 
@@ -671,13 +688,29 @@ body {
   opacity: 1;
 }
 
+.phone-zoom-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(168, 85, 247, 0.85);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
 .phone-caption {
-  font-size: 0.84rem;
+  font-size: 0.74rem;
   font-weight: 600;
   color: #fff;
   text-align: center;
-  padding: 8px 4px 2px;
-  line-height: 1.35;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   width: 100%;
 }
 
@@ -856,15 +889,18 @@ body {
   aspect-ratio: 3 / 4;
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: #000;
+  background: #080a14;
   margin-bottom: 14px;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .book-cover-wrap img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* Utrucce ve diğer kitap başlıkları asla kırpılmaz */
   display: block;
 }
 
@@ -1118,13 +1154,14 @@ body {
 .lightbox-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.92);
+  background: rgba(0, 0, 0, 0.94);
   z-index: 9999;
   display: none;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .lightbox-modal.active {
@@ -1135,16 +1172,28 @@ body {
   position: absolute;
   top: 20px;
   right: 25px;
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-medium);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
   color: #fff;
-  font-size: 2.2rem;
+  font-size: 1.8rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: var(--transition);
+}
+
+.lightbox-close:hover {
+  background: var(--color-purple);
 }
 
 .lightbox-content {
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: 92vw;
+  max-height: 92vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1154,15 +1203,19 @@ body {
   max-width: 100%;
   max-height: 82vh;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(168, 85, 247, 0.3);
   object-fit: contain;
 }
 
 .lightbox-caption {
   color: #fff;
-  font-size: 0.95rem;
-  margin-top: 12px;
+  font-size: 1rem;
+  margin-top: 14px;
   font-weight: 600;
+  background: rgba(17, 20, 32, 0.8);
+  padding: 6px 18px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
 }
 
 /* ================= Toast Bildirimi ================= */
@@ -1235,6 +1288,7 @@ body {
     align-self: flex-start !important;
     margin: 0 !important;
     padding: 0 !important;
+    white-space: nowrap !important;
   }
   
   .nav-links {
@@ -1264,12 +1318,12 @@ body {
   }
 
   .phone-mockup {
-    flex: 0 0 220px;
+    flex: 0 0 140px;
   }
 
   .phone-screen,
   .phone-screen-wrap {
-    height: 390px;
+    height: 245px;
   }
   
   .store-banner {
@@ -1296,11 +1350,10 @@ body {
     width: 100%;
   }
   .phone-mockup {
-    flex: 0 0 78vw;
-    max-width: 260px;
+    flex: 0 0 135px;
   }
   .phone-screen,
   .phone-screen-wrap {
-    height: 380px;
+    height: 235px;
   }
 }
