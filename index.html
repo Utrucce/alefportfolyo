@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="tr" data-lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#07080e">
+  <title>ALΣF (ALEF) | Eğitim, Yayın ve Dijital Projeler Portalı</title>
+  <meta name="description" content="Sertan Çubukcu tarafından geliştirilen ALΣF mobil uygulamaları, EğitimYayın Mağazası, Google Play Kitapları, canlı internet platformları, Telegram botları ve Hâl Tercümesi portali.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Animasyonlu Rengârenk Arka Plan Tuvali (Loraks, Transformers Energon & Yu-Gi-Oh Yıldızları) -->
+  <!-- Optik Cam Kırılması İçin Referans Görsel (RainyDay.js) -->
+  <img id="nanoBgRef" src="assets/site_bg_nano.png" style="display:none;" alt="Arka Plan Referansı" crossorigin="anonymous">
+
+  <!-- Şimşek Çakması Işık Katmanı -->
+  <div id="lightningFlashOverlay" aria-hidden="true"></div>
+
+  <!-- Optik Cam Kırılması İçin Referans Görsel (RainyDay.js) -->
+  <img id="nanoBgRef" src="assets/site_bg_nano.png" style="display:none;" alt="Arka Plan Referansı" crossorigin="anonymous">
+
+  <!-- Animasyonlu Rengarenk Arka Plan Tuvali (Loraks, Transformers Energon & Yu-Gi-Oh Yıldızları) -->
+  <canvas id="mythicBgCanvas"></canvas>
+
+  <!-- Uçuşan 3B Fotoğrafik Eterik Kelebekler (Orijinal Morfo Kanatları) -->
+  <div id="butterflyContainer" aria-hidden="true"></div>
+
+  <!-- Ekranın Altında Dalgalanan Doğal Okyanus (Paralaks Destekli) -->
+  <canvas id="oceanWavesCanvas" aria-hidden="true"></canvas>
+
+  <!-- 3B WebGL Kambur Balina & Okyanus Sıçraması Tuvali (Three.js 3D Humpback Whale & Breach) -->
+  <canvas id="whaleThreeCanvas" aria-hidden="true"></canvas>
+
+  <!-- Gerçekçi Optik Cam Islanması & Su Damlaları (RainyDay.js + Fiziksel Su Lensi) -->
+  <div id="rainyGlassContainer" aria-hidden="true"></div>
+  <canvas id="screenSplashCanvas" aria-hidden="true"></canvas>
+
+  <button id="summonWhaleBtn" class="whale-trigger-btn" aria-label="Balinayı Zıplat" title="Mitolojik Balinayı Çağır">
+    <span style="font-size: 1.15rem;">🌊</span> Balinayı Zıplat <span style="font-size: 1.15rem;">🐋</span>
+  </button>
+
+
+  <!-- Arka Plan Küreleri -->
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+
+  <!-- Üst Gezinme Çubuğu (Mobilde Göreceli / Relative Konumlandırma) -->
+  <header class="site-header">
+    <div class="container nav-wrapper">
+      <a href="index.html" class="brand-group" aria-label="ALΣF Ana Sayfa">
+        <div class="brand-logos">
+          <img src="assets/kurt.png" alt="Kurt Arma" class="nav-logo-thumb">
+          <img src="assets/logo-photoroom.png" alt="Sertan Çubukcu Logo" class="nav-logo-thumb">
+          <img src="assets/alef-logo.png" alt="ALΣF Logo" class="nav-logo-thumb">
+        </div>
+        <div class="brand-text">
+          <h1>AL<span class="sigma">Σ</span>F</h1>
+        </div>
+      </a>
+
+      <!-- Gezinme Bağlantıları -->
+      <nav class="nav-links">
+        <a href="#tanitim">Tanıtım</a>
+        <a href="#ana-uygulamalar">Uygulamalar</a>
+        <a href="#goruntuler">Görüntüler</a>
+        <a href="#hal-tercumesi">Hâl Tercümesi</a>
+        <a href="#yayinlar">Kitaplar &amp; Mağaza</a>
+        <a href="#internet-projeleri">İnternet Projeleri</a>
+        <a href="#telegram-ekosistemi">Telegram</a>
+        <a href="#iletisim">İletişim</a>
+        <a href="privacy.html" class="active">Gizlilik İlkeleri</a>
+      </nav>
+
+      <!-- Dil Seçici (Taşmasız ve Dokunmatik Dostu) -->
+      <div class="lang-switcher-wrap">
+        <div class="lang-switcher" role="group" aria-label="Dil Seçimi">
+          <button class="lang-btn active" data-lang="tr" aria-pressed="true">Türkçe</button>
+          <button class="lang-btn" data-lang="en" aria-pressed="false">English</button>
+          <button class="lang-btn" data-lang="both" aria-pressed="false">İkisi</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Giriş (Hero) Bölümü -->
+    <section class="hero" id="tanitim">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span>Öğretmenlik ve Millî Eğitim Akademisi Hazırlık Portalı</span>
+      </div>
+
+      <h1 class="hero-title">
+        Öğretmenlik ve Akademi Yolunda<br>
+        <span class="text-gradient">AL<span class="sigma">Σ</span>F ile Zirveye Adım At</span>
+      </h1>
+
+      <p class="hero-subtitle text-justify">
+        Millî Eğitim Bakanlığı Akademi Giriş Sınavı (M<span class="sigma">Σ</span>B - AGS) ve Türkçe ÖABT adayları için
+        titizlikle geliştirilen kapsamlı soru havuzu, deneme sınavları, konu özetleri, <strong>EğitimYayın Mağazası</strong>,
+        <strong>Google Play Kitapları</strong>, <strong>Türk Söylenceler Sözlüğü</strong> dijital kültür portalı, canlı internet platformları, 8 adet etkileşimli Telegram eğitim botu ve
+        geliştirilmekte olan yeni nesil Android uygulamalarıyla eksiksiz bir eğitim ekosistemi.
+      </p>
+
+      <div class="action-bar">
+        <a href="#ana-uygulamalar" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+          Uygulamalar
+        </a>
+        <a href="#goruntuler" class="btn btn-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+          Uygulama Görüntüleri
+        </a>
+        <a href="#hal-tercumesi" class="btn btn-outline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Hâl Tercümesi
+        </a>
+        <a href="#yayinlar" class="btn btn-store">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          Kitaplar &amp; Mağaza
+        </a>
+        <a href="https://utrucce.github.io/Turk-Soylenceler-Sozlugu/" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="border-color: #ffd700; box-shadow: 0 4px 22px rgba(255, 215, 0, 0.35);">
+          🐺 Türk Söylenceler Sözlüğü
+        </a>
+        <a href="privacy.html" class="btn btn-outline">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Gizlilik Politikası
+        </a>
+      </div>
+    </section>
+
+    <!-- Uygulamalarımız Izgarası -->
+    <section id="ana-uygulamalar" style="margin: 45px 0 65px;">
+      <div class="section-head">
+        <div>
+          <h2>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            Mobil Uygulamalarımız
+          </h2>
+          <p class="text-justify">
+            Adaylarımızın sınav hazırlığında ve günlük manevi yaşamında doğrudan kullandığı, hem telefondan hem de bilgisayardan gerçek logolarıyla sunulan mobil platformlarımız:
+          </p>
+        </div>
+      </div>
+
+      <div class="apps-grid">
+        <!-- 1. MEB-AGS -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/mebags_phone_icon.png" alt="ALΣF MEB-AGS Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>AL<span class="sigma">Σ</span>F - M<span class="sigma">Σ</span>B - AGS</h3>
+                <span>Millî Eğitim Akademisi Hazırlık</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge badge-green" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">✓ Yayında</span>
+              <span class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">10.990+ Soru</span>
+            </div>
+            <p class="app-desc text-justify">
+              Akademi Giriş Sınavı müfredatına tam uyumlu deneme sınavları, mevzuat soru bankası, bilgi kartları ve internetsiz çalışma desteği.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="#goruntuler" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">Ekran Görüntüleri &rarr;</a>
+          </div>
+        </div>
+
+        <!-- 2. Türkçe ÖABT -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/alef_turkce_oabt_orange.png" alt="ALΣF Türkçe ÖABT Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>AL<span class="sigma">Σ</span>F Türkçe ÖABT</h3>
+                <span>Alan Bilgisi ve Eğitimi</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge badge-green" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">✓ Yayında</span>
+              <span class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">Edebiyat &amp; Dil</span>
+            </div>
+            <p class="app-desc text-justify">
+              Eski Türk Dili, Yeni Türk Edebiyatı, Halk Edebiyatı ve Alan Eğitimi modülleriyle Türkçe öğretmen adaylarına özel akademik hazırlık platformu.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="#goruntuler" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">Ekran Görüntüleri &rarr;</a>
+          </div>
+        </div>
+
+        <!-- 3. KPSS -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/app-kpss-logo.png" alt="ALΣF KPSS Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>AL<span class="sigma">Σ</span>F KPSS</h3>
+                <span>Genel Yetenek &amp; Genel Kültür</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">ÖSYM Formatı</span>
+            </div>
+            <p class="app-desc text-justify">
+              Tarih, Coğrafya, Vatandaşlık ve Türkçe alanlarında tam kapsamlı soru havuzu, denemeler ve detaylı çözümler.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="#goruntuler" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">İncele &rarr;</a>
+          </div>
+        </div>
+
+        <!-- 4. EKYS -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/app-ekys-logo.png" alt="ALΣF EKYS Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>AL<span class="sigma">Σ</span>F EKYS</h3>
+                <span>Eğitim Kurumları Yöneticiliği</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">Mevzuat &amp; Yönetim</span>
+            </div>
+            <p class="app-desc text-justify">
+              Müdür ve müdür yardımcılığı sınavlarına hazırlanan eğitimciler için güncel mevzuat testleri ve deneme modülleri.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="#goruntuler" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">İncele &rarr;</a>
+          </div>
+        </div>
+
+        <!-- 5. İslam Vakti -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/app-islam-vakti-logo.png" alt="İslam Vakti Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>İslam Vakti: Omuz Omuza</h3>
+                <span>Manevi Yaşam &amp; İbadet</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge badge-green" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">Çevrim Dışı</span>
+            </div>
+            <p class="app-desc text-justify">
+              Namaz vakitleri, zikirçeker, manevi bahçe ve irfan kartları içeren kullanıcı dostu mobil manevi yaşam rehberi.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="#goruntuler" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">Ekran Görüntüleri &rarr;</a>
+          </div>
+        </div>
+
+        <!-- 6. Kıble Bulucu -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/app-kible-logo.png" alt="Kıble Bulucu Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>Kıble Bulucu</h3>
+                <span>Pusula ve Harita Destekli</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">Hassas Açı</span>
+            </div>
+            <p class="app-desc text-justify">
+              Cihazın donanım pusulasını kullanarak konumu sunucuya iletmeden anlık yerel matematiksel açıyla kıble tayini yapar.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="#goruntuler" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">İncele &rarr;</a>
+          </div>
+        </div>
+
+        <!-- 7. Karargâh -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/app-karargah.png" alt="Karargâh Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>Karargâh</h3>
+                <span>Veri ve Telefon Güvenliği</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">Güvenlik &amp; Gizlilik</span>
+            </div>
+            <p class="app-desc text-justify">
+              Kullanıcı verilerinin cihaz içinde güvenle saklanması ve telefon güvenliğinin denetlenmesi için geliştirilen yerel güvenlik kalkanı.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="privacy.html" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">Güvenlik İlkeleri &rarr;</a>
+          </div>
+        </div>
+
+        <!-- 8. Mergen -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/app-mergen-logo.png" alt="Mergen Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>Mergen</h3>
+                <span>Akıl ve Strateji Motoru</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">Eğitim AR-GE</span>
+            </div>
+            <p class="app-desc text-justify">
+              Soru analiz algoritmaları ve sınav stratejileri geliştiren akıllı soru tahlil asistanı.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="#telegram-ekosistemi" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">Telegram Botu &rarr;</a>
+          </div>
+        </div>
+
+        <!-- 9. Pırtıl -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/app-pirtil-logo.png" alt="Pırtıl Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>Pırtıl</h3>
+                <span>Yerel Sûnî Zekâ</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">İnternetsiz Model</span>
+            </div>
+            <p class="app-desc text-justify">
+              Eğitilmek üzere olan, doğrudan telefonda çalışan ve hiçbir internet bağlantısına ihtiyaç duymayan yerel sûnî zekâ çekirdeği.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="#telegram-ekosistemi" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">İncele &rarr;</a>
+          </div>
+        </div>
+
+        <!-- 10. Asayiş Berko -->
+        <div class="app-card">
+          <div>
+            <div class="app-card-header">
+              <img src="assets/app-berko-logo.png" alt="Asayiş Berko Logo" class="app-icon-thumb">
+              <div class="app-meta">
+                <h3>Asayiş Berko</h3>
+                <span>Dijital Güvenlik ve Emniyet</span>
+              </div>
+            </div>
+            <div class="app-badges">
+              <span class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin: 0;">Yerel Denetim</span>
+            </div>
+            <p class="app-desc text-justify">
+              Zararlı içerikleri filtreleyen ve dijital cihaz emniyetini sağlayan koruyucu mobil güvenlik çözümü.
+            </p>
+          </div>
+          <div class="app-actions">
+            <a href="#telegram-ekosistemi" class="btn btn-outline" style="font-size: 0.82rem; padding: 8px 14px;">İncele &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Uygulama Ekran Görüntüleri Galerisi (Eski Sağlam ve Kesintisiz Hali) -->
+    <section class="screenshots-section" id="goruntuler">
+      <div class="section-head">
+        <div>
+          <h2>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            AL<span class="sigma">Σ</span>F Uygulama Ekran Görüntüleri
+          </h2>
+          <p class="text-justify">
+            Mobil uygulamalarımızın modern arayüzü, soru çözüm modülleri ve manevi araçları (Büyütmek için görsele tıklayın):
+          </p>
+        </div>
+        <div class="carousel-nav-btns">
+          <button id="prevScreenshot" class="carousel-arrow" aria-label="Önceki">&#8592;</button>
+          <button id="nextScreenshot" class="carousel-arrow" aria-label="Sonraki">&#8594;</button>
+        </div>
+      </div>
+
+      <div class="carousel-track" id="screenshotTrack">
+        <!-- 1. ALΣF Sınav ve Deneme Ekranları -->
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/ekran_goruntusu_1.png" alt="ALΣF Giriş ve Ana Menü" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Giriş ve Ana Menü</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/ekran_goruntusu_2.png" alt="ALΣF Modül ve Konu Seçimi" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Modül ve Konu Seçimi</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/ekran_goruntusu_3.png" alt="ALΣF Soru Listesi" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Soru Listesi &amp; Filtreler</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/ekran_goruntusu_4.png" alt="ALΣF Soru Çözümü" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Soru Çözümü &amp; Açıklamalar</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/ekran_goruntusu_5.png" alt="ALΣF Performans İstatistikleri" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Performans İstatistikleri</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/ekran_goruntusu_6.png" alt="ALΣF Zaman Ayarlı Deneme Sınavı" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Zaman Ayarlı Deneme Sınavı</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/ekran_goruntusu_7.png" alt="ALΣF Kişiselleştirilmiş Notlar" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Kişiselleştirilmiş Notlar</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/ekran_goruntusu_8.png" alt="ALΣF Sınav Geri Sayımı" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Sınav Geri Sayımı &amp; Raporlar</span></div>
+          </div>
+        </div>
+
+        <!-- 2. İslam Vakti & Manevi Yaşam Ekranları -->
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/01_Namaz_Vakitleri_ve_Sayac.png" alt="Namaz Vakitleri ve Geri Sayım" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Namaz Vakitleri &amp; Sayaç</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/02_Kible_Pusulasi_ve_Harita.png" alt="Kıble Pusulası ve Konum Haritası" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Kıble Pusulası &amp; Konum</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/03_Manevi_Bahce_ve_Ciftlik.png" alt="Manevi Bahçe ve Çiftlik" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Manevi Bahçe &amp; Çiftlik</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/04_Zikirmatik_ve_Manevi_Zincir.png" alt="Zikirçeker ve Manevi Zincir" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Zikirçeker &amp; Manevi Zincir</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/05_Islami_Araclar_ve_Kesfet.png" alt="İslami Araçlar ve Keşfet" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">İslami Araçlar &amp; Keşfet</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/06_Utrucce_Irfan_Kartlari.png" alt="Utrucce İrfan Kartları" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Utrucce İrfan Kartları</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/07_Hudhud_Guvenli_Tarayici.png" alt="Hüdhüd Güvenli Tarayıcı" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Hüdhüd Güvenli Tarayıcı</span></div>
+          </div>
+        </div>
+        <div class="phone-mockup" title="Büyütmek için tıklayın">
+          <div class="phone-screen">
+            <img src="assets/08_Pirtil_Medya_Oynatici.png" alt="Pırtıl Medya Oynatıcı" loading="lazy">
+            <div class="phone-overlay"><span class="phone-caption">Pırtıl Medya Oynatıcı</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hâl Tercümesi (Özgeçmiş) Bölümü -->
+    <section id="hal-tercumesi" style="margin: 50px 0 65px;">
+      <div class="section-head">
+        <div>
+          <h2>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Hâl Tercümesi (Özgeçmiş)
+          </h2>
+          <p class="text-justify">
+            Geliştirici ve yazar Sertan Çubukcu'nun akademik eğitimi, tamamlanan profesyonel deneyimleri, projeleri ve yetkinlikleri:
+          </p>
+        </div>
+      </div>
+
+      <!-- CV Üst Başlık Kartı -->
+      <div class="cv-hero-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+          <div>
+            <span class="badge badge-green" style="margin-bottom: 8px;"><span class="badge-dot"></span>Türkçe Öğretmeni &amp; Yazılım Geliştirici</span>
+            <h3 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0 0 6px;">Sertan Çubukcu</h3>
+            <p style="color: var(--text-secondary); margin: 0 0 12px; font-size: 0.98rem;">
+              Yıldız Teknik Üniversitesi Eğitim Fakültesi Türkçe Öğretmenliği Mezunu • Eğitim Yayıncısı &amp; Dijital Sistem Mimarı
+            </p>
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 0.88rem; color: var(--color-cyan-light);">
+              <span>📧 sertancubukcu@gmail.com</span>
+              <span>📍 İstanbul, Türkiye</span>
+              <span>🎓 YTÜ Türkçe Öğretmenliği (2021 – 2025)</span>
+            </div>
+          </div>
+          <div>
+            <a href="mailto:sertancubukcu@gmail.com" class="btn btn-primary" style="font-size: 0.88rem;">
+              Doğrudan İletişime Geç &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CV Bilgi Kartları Izgarası -->
+      <div class="cv-grid">
+        <!-- 1. Eğitim Bilgileri -->
+        <div class="cv-card">
+          <div class="cv-card-header">
+            <div class="cv-card-icon purple">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+            </div>
+            <div>
+              <h3 style="font-size: 1.15rem; color: #fff; margin: 0;">Eğitim Hayatı</h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Lisans Derecesi</span>
+            </div>
+          </div>
+          <div class="cv-timeline">
+            <div class="cv-timeline-item">
+              <span class="cv-date-badge">Eylül 2021 – Ocak 2025</span>
+              <div class="cv-role">Türkçe Öğretmenliği (Lisans)</div>
+              <div class="cv-org">Yıldız Teknik Üniversitesi • Eğitim Fakültesi</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                Türk dili grameri, edebiyat tahlilleri, eğitim sosyolojisi, ölçme ve değerlendirme, çocuk edebiyatı ve öğretim teknolojileri alanlarında dört yıllık akademik lisans programını başarıyla tamamladı.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Çalışma ve İş Tecrübeleri -->
+        <div class="cv-card">
+          <div class="cv-card-header">
+            <div class="cv-card-icon blue">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            </div>
+            <div>
+              <h3 style="font-size: 1.15rem; color: #fff; margin: 0;">Çalışma Tecrübesi</h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Tamamlanan Görevler</span>
+            </div>
+          </div>
+          <div class="cv-timeline">
+            <div class="cv-timeline-item">
+              <span class="cv-date-badge">Eylül 2024 – 31 Mayıs 2025</span>
+              <div class="cv-role">Eğitimci &amp; Türkçe Öğretmeni</div>
+              <div class="cv-org">Çınar Koleji (31 Mayıs 2025'te tamamlandı)</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                Ortaokul kademesinde Türkçe dersleri, LGS hazırlık deneme tahlilleri, okuma becerileri ve öğrenci rehberliği süreçleri icra edildi.
+              </p>
+            </div>
+            <div class="cv-timeline-item">
+              <span class="cv-date-badge">Haziran 2024 – Temmuz 2024</span>
+              <div class="cv-role">Kurumsal İletişim &amp; Operasyon</div>
+              <div class="cv-org">Aygaz A.Ş. (Temmuz 2024'te tamamlandı)</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                Kurumsal operasyon yönetimi, müşteri deneyimi ve veri takip süreçlerinde profesyonel iş deneyimi kazanıldı.
+              </p>
+            </div>
+            <div class="cv-timeline-item">
+              <span class="cv-date-badge">Şubat 2020 – Ağustos 2020</span>
+              <div class="cv-role">Lojistik ve Operasyon Görevlisi</div>
+              <div class="cv-org">MNG Kargo</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                Paketleme, barkodlama ve dağıtım ağları yönetimi.
+              </p>
+            </div>
+            <div class="cv-timeline-item">
+              <span class="cv-date-badge">Mayıs 2018 – Ocak 2019</span>
+              <div class="cv-role">Depo ve Satış Sorumlusu</div>
+              <div class="cv-org">Tempo Şekerleme</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                Stok takibi, müşteri ilişkileri ve sevkiyat organizasyonu.
+              </p>
+            </div>
+            <div class="cv-timeline-item">
+              <span class="cv-date-badge">Mart 2016 – Ağustos 2016</span>
+              <div class="cv-role">Kasiyer ve Reyon Görevlisi</div>
+              <div class="cv-org">Şok Marketler T.A.Ş.</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                Müşteri memnuniyeti, kasa ve stok yönetimi süreçleri.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Stajlar ve Projeler -->
+        <div class="cv-card">
+          <div class="cv-card-header">
+            <div class="cv-card-icon green">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <div>
+              <h3 style="font-size: 1.15rem; color: #fff; margin: 0;">Staj &amp; Bilimsel Projeler</h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">TÜBİTAK &amp; Millî Eğitim</span>
+            </div>
+          </div>
+          <div class="cv-timeline">
+            <div class="cv-timeline-item green">
+              <span class="cv-date-badge">Kasım 2024 – Mayıs 2025</span>
+              <div class="cv-role">TÜBİTAK 2209-A Proje Araştırmacısı</div>
+              <div class="cv-org">TÜBİTAK Üniversite Öğrencileri Araştırma Projeleri Destekleme Programı</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                "PISA Okuma Becerileri Kapsamında Türkçe Öğretmenliği Adaylarının Metin İnceleme Düzeyleri ve Dijital Ölçme Yöntemleri" konulu akademik araştırma yürütüldü ve başarıyla neticelendirildi.
+              </p>
+            </div>
+            <div class="cv-timeline-item green">
+              <span class="cv-date-badge">Eylül 2024 – Mayıs 2025</span>
+              <div class="cv-role">Öğretmenlik Uygulaması Stajyeri</div>
+              <div class="cv-org">Çınar Koleji (Mayıs 2025'te tamamlandı)</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                Ders planı hazırlama, akıllı tahta uygulamaları, soru kökü analizi ve birebir öğrenci koçluğu icra edildi.
+              </p>
+            </div>
+            <div class="cv-timeline-item green">
+              <span class="cv-date-badge">Eylül 2023 – Haziran 2024</span>
+              <div class="cv-role">Öğretmenlik Uygulaması Stajyeri</div>
+              <div class="cv-org">Esenler Yunus Emre Ortaokulu (Tamamlandı)</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                Devlet okulu kademesinde sınıf yönetimi, ders sunumu ve sınav uygulamaları yürütüldü.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Gönüllülük ve Sosyal Sorumluluk -->
+        <div class="cv-card">
+          <div class="cv-card-header">
+            <div class="cv-card-icon orange">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </div>
+            <div>
+              <h3 style="font-size: 1.15rem; color: #fff; margin: 0;">Gönüllülük Çalışmaları</h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Eğitimde Fırsat Eşitliği</span>
+            </div>
+          </div>
+          <div class="cv-timeline">
+            <div class="cv-timeline-item">
+              <span class="cv-date-badge">2023 – 2025</span>
+              <div class="cv-role">Gönüllü Türkçe Eğitmeni</div>
+              <div class="cv-org">Okul Destek Derneği (ODD)</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                İhtiyaç sahibi ortaokul öğrencilerine çevrim içi canlı dersler vererek eğitimde fırsat eşitliğine destek sağlandı.
+              </p>
+            </div>
+            <div class="cv-timeline-item">
+              <span class="cv-date-badge">2022 – 2024</span>
+              <div class="cv-role">Kulüp Yöneticisi &amp; Atölye Moderatörü</div>
+              <div class="cv-org">YTÜ Dil Atölyesi Kulübü</div>
+              <p class="text-justify" style="font-size: 0.86rem; color: var(--text-secondary);">
+                Edebi metin tahlili çalıştayları, yazar söyleşileri ve kitap tahlili etkinlikleri düzenlendi.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Sertifikalar ve Eğitim Seminerleri -->
+        <div class="cv-card" style="grid-column: 1 / -1;">
+          <div class="cv-card-header">
+            <div class="cv-card-icon purple">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+            </div>
+            <div>
+              <h3 style="font-size: 1.15rem; color: #fff; margin: 0;">Sertifikalar ve Yetkinlikler</h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">YetGen, Veri Bilimi, Robotik ve Pedagojik Formasyon</span>
+            </div>
+          </div>
+          <div class="cv-badge-list">
+            <span class="cv-badge-item">🎖️ Yetkin Gençler (YetGen) 21. Yüzyıl Becerileri Eğitimi (Mayıs 2025)</span>
+            <span class="cv-badge-item">🎖️ English B1 / CEFR Standartları Sertifikası</span>
+            <span class="cv-badge-item">🎖️ Etkili İletişim Stratejileri ve Beden Dili</span>
+            <span class="cv-badge-item">🎖️ Zaman Yönetimi ve Kişisel Verimlilik</span>
+            <span class="cv-badge-item">🎖️ Öğretmenlerde Psikolojik Sağlamlık</span>
+            <span class="cv-badge-item">🎖️ Veri Bilimine Giriş (Data Science Fundamentals)</span>
+            <span class="cv-badge-item">🎖️ Problem Çözme ve Karar Verme Teknikleri</span>
+            <span class="cv-badge-item">🎖️ Topluluk Önünde Konuşma ve Hitabet</span>
+            <span class="cv-badge-item">🎖️ Microsoft Word Temelleri ve İleri Düzey Mizanpaj</span>
+            <span class="cv-badge-item">🎖️ Mesleki İngilizce (Business English)</span>
+            <span class="cv-badge-item">🎖️ Arduino ile Robotik Kodlama ve Sensör Mimarisi</span>
+            <span class="cv-badge-item">🎖️ Atılganlık (Assertiveness) ve Liderlik</span>
+            <span class="cv-badge-item">🎖️ Zor Öğrencilerle İletişim ve Kriz Yönetimi</span>
+            <span class="cv-badge-item">🎖️ Dijital Yaşam Becerileri ve Güvenlik</span>
+            <span class="cv-badge-item">🎖️ Bilgisayarsız Kodlama (Unplugged Coding)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bionluk Özel Banner -->
+    <div class="bionluk-banner-card">
+      <div>
+        <div class="bionluk-badge">Bionluk Uzman Hizmeti</div>
+        <h3 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0 0 6px;">utrucce - Metin ve Video Editörü | Bionluk</h3>
+        <p class="text-justify" style="color: var(--text-secondary); margin: 0; font-size: 0.94rem; max-width: 720px;">
+          Metin tahlili, soru kitapçığı redaksiyonu, kitap mizanpajı, video montajı ve profesyonel editörlük hizmetleri için Bionluk profilimizi ziyaret edebilirsiniz.
+        </p>
+      </div>
+      <a href="https://bionluk.com/utrucce" target="_blank" rel="noopener noreferrer" class="btn btn-bionluk">
+        Bionluk Profiline Git &rarr;
+      </a>
+    </div>
+
+    <!-- Yayınlar & Kitaplar Bölümü -->
+    <section id="yayinlar" style="margin: 50px 0 65px;">
+      <div class="section-head">
+        <div>
+          <h2>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Yayın Mağazası &amp; Google Play Kitapları
+          </h2>
+          <p class="text-justify">
+            Sertan Çubukcu tarafından kaleme alınan lisanslı eğitim yayınları, soru bankaları ve dijital eserler:
+          </p>
+        </div>
+      </div>
+
+      <!-- EğitimYayın Mağaza Kartı -->
+      <div class="store-banner">
+        <img src="assets/google_play_developer_logo.jpg" alt="EğitimYayın Logo" class="store-banner-logo">
+        <div style="flex: 1;">
+          <div class="badge badge-green" style="margin-bottom: 6px;"><span class="badge-dot"></span>Resmî Satış &amp; Dağıtım Mağazası</div>
+          <h3 style="font-size: 1.4rem; font-weight: 800; margin: 0 0 8px; color: #fff;">AL<span class="sigma">Σ</span>F | Sertan Çubukcu | EğitimYayın</h3>
+          <p class="text-justify" style="color: var(--text-secondary); margin: 0 0 14px; font-size: 0.94rem;">
+            Türkçe Öğretmenliği ÖABT ve Millî Eğitim Akademisi hazırlık soru bankaları ve özel deneme setleri güvenli satış portalı.
+          </p>
+          <a href="https://egitimyayin.com/magaza.php?slug=alef-sertan-cubukcu" target="_blank" rel="noopener noreferrer" class="btn btn-store">
+            EğitimYayın Mağazasına Git &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Google Play Kitaplar Izgarası (Utrucce Dahil 7 Kitap) -->
+      <div class="books-grid">
+        <!-- 1. Utrucce -->
+        <a href="https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_Utrucce?id=7RdaEQAAQBAJ&hl=tr" target="_blank" rel="noopener noreferrer" class="book-card-3d">
+          <div class="book-cover-wrap"><img src="assets/book_utrucce.jpg" alt="Utrucce Kapağı" loading="lazy"></div>
+          <div class="book-info">
+            <div class="badge badge-green" style="font-size: 0.72rem; padding: 2px 8px; margin-bottom: 6px;">★ 5,0 • Ücretsiz</div>
+            <h3>Utrucce</h3>
+            <span class="book-author">Sertan Çubukcu</span>
+          </div>
+          <div class="book-cta"><span>Google Play'de İncele</span> &rarr;</div>
+        </a>
+
+        <!-- 2. Pırtıl Terakki-2 -->
+        <a href="https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_P%C4%B1rt%C4%B1l_Terakki_2_T%C3%BCrk%C3%A7e_%C3%96ABT?id=F9jWEQAAQBAJ" target="_blank" rel="noopener noreferrer" class="book-card-3d">
+          <div class="book-cover-wrap"><img src="assets/book_cover_F9jWEQAAQBAJ.jpg" alt="Pırtıl Terakki-2 Kapağı" loading="lazy"></div>
+          <div class="book-info">
+            <div class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin-bottom: 6px;">★ 3,4 • Ücretsiz</div>
+            <h3>Pırtıl Terakki-2, Türkçe ÖABT</h3>
+            <span class="book-author">Sertan Çubukcu</span>
+          </div>
+          <div class="book-cta"><span>Google Play'de İncele</span> &rarr;</div>
+        </a>
+
+        <!-- 3. Türkçe ÖABT Denemesi -->
+        <a href="https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_T%C3%BCrk%C3%A7e_%C3%96ABT_Denemesi_P%C4%B1rt%C4%B1l_Terakki?id=TzTMEQAAQBAJ" target="_blank" rel="noopener noreferrer" class="book-card-3d">
+          <div class="book-cover-wrap"><img src="assets/book_cover_TzTMEQAAQBAJ.jpg" alt="Türkçe ÖABT Denemesi Kapağı" loading="lazy"></div>
+          <div class="book-info">
+            <div class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin-bottom: 6px;">★ 2,3 • Ücretsiz</div>
+            <h3>Türkçe ÖABT Denemesi, Pırtıl-Terakki</h3>
+            <span class="book-author">Sertan Çubukcu</span>
+          </div>
+          <div class="book-cta"><span>Google Play'de İncele</span> &rarr;</div>
+        </a>
+
+        <!-- 4. Halk Edebiyatı - Girizgâh -->
+        <a href="https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_Halk_Edebiyat%C4%B1_Girizg%C3%A2h_Soru_Mecmua?id=_uPKEQAAQBAJ" target="_blank" rel="noopener noreferrer" class="book-card-3d">
+          <div class="book-cover-wrap"><img src="assets/book_cover__uPKEQAAQBAJ.jpg" alt="Halk Edebiyatı Kapağı" loading="lazy"></div>
+          <div class="book-info">
+            <div class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin-bottom: 6px;">★ 4,2 • Ücretsiz</div>
+            <h3>Halk Edebiyatı - Girizgâh</h3>
+            <span class="book-author">Sertan Çubukcu</span>
+          </div>
+          <div class="book-cta"><span>Google Play'de İncele</span> &rarr;</div>
+        </a>
+
+        <!-- 5. 2024 Maarif Karikatürleştirilmiş Öğrenme Çıktıları -->
+        <a href="https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_2024_Maarif_Karikat%C3%BCrle%C5%9Ftirildi_ve_T?id=xuPKEQAAQBAJ" target="_blank" rel="noopener noreferrer" class="book-card-3d">
+          <div class="book-cover-wrap"><img src="assets/book_cover_xuPKEQAAQBAJ.jpg" alt="2024 Maarif Kapağı" loading="lazy"></div>
+          <div class="book-info">
+            <div class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin-bottom: 6px;">★ 4,8 • Ücretsiz</div>
+            <h3>2024 Maarif Karikatürleştirilmiş Çıktılar</h3>
+            <span class="book-author">Sertan Çubukcu</span>
+          </div>
+          <div class="book-cta"><span>Google Play'de İncele</span> &rarr;</div>
+        </a>
+
+        <!-- 6. Mihenk Zühre -->
+        <a href="https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_Mihenk_Z%C3%BChre_T%C3%BCrk%C3%A7e_%C3%96ABT?id=NLMCEgAAQBAJ" target="_blank" rel="noopener noreferrer" class="book-card-3d">
+          <div class="book-cover-wrap"><img src="assets/book_cover_NLMCEgAAQBAJ.jpg" alt="Mihenk Zühre Kapağı" loading="lazy"></div>
+          <div class="book-info">
+            <div class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin-bottom: 6px;">★ 3,7 • Ücretsiz</div>
+            <h3>Mihenk Zühre / Türkçe ÖABT</h3>
+            <span class="book-author">Sertan Çubukcu</span>
+          </div>
+          <div class="book-cta"><span>Google Play'de İncele</span> &rarr;</div>
+        </a>
+
+        <!-- 7. Pırtlak-1 -->
+        <a href="https://play.google.com/store/books/details/Sertan_%C3%87ubukcu_T%C3%BCrk%C3%A7e_%C3%96ABT_Denemesi_P%C4%B1rtlak_1?id=RBLZEQAAQBAJ" target="_blank" rel="noopener noreferrer" class="book-card-3d">
+          <div class="book-cover-wrap"><img src="assets/book_cover_RBLZEQAAQBAJ.jpg" alt="Pırtlak-1 Kapağı" loading="lazy"></div>
+          <div class="book-info">
+            <div class="badge" style="font-size: 0.72rem; padding: 2px 8px; margin-bottom: 6px;">★ 4,0 • Ücretsiz</div>
+            <h3>Türkçe ÖABT Denemesi / Pırtlak-1</h3>
+            <span class="book-author">Sertan Çubukcu</span>
+          </div>
+          <div class="book-cta"><span>Google Play'de İncele</span> &rarr;</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Canlı İnternet Platformları -->
+    <section id="internet-projeleri" style="margin: 50px 0 65px;">
+      <div class="section-head">
+        <div>
+          <h2>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Canlı İnternet Platformları
+          </h2>
+          <p class="text-justify">
+            Geliştirici Sertan Çubukcu tarafından kurulan ve yayında olan çevrim içi internet servisleri:
+          </p>
+        </div>
+      </div>
+
+      <!-- Öne Çıkan Kültür & Mitoloji Portalı: Türk Söylenceler Sözlüğü -->
+      <div class="store-banner" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.16) 0%, rgba(245, 158, 11, 0.12) 50%, rgba(17, 20, 32, 0.92) 100%); border: 1.5px solid rgba(255, 215, 0, 0.45); box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 25px rgba(14, 165, 233, 0.2); margin-bottom: 28px; flex-wrap: wrap;">
+        <img src="assets/turk-soylenceler-bg.jpg" alt="Türk Söylenceler Sözlüğü Görseli" style="width: 150px; height: 150px; border-radius: 18px; object-fit: cover; border: 2px solid rgba(255, 215, 0, 0.65); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6); flex-shrink: 0;">
+        <div style="flex: 1; min-width: 260px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;">
+            <span class="badge badge-green" style="margin: 0; font-size: 0.75rem; padding: 3px 10px;"><span class="badge-dot"></span>✓ Yayında • Dijital Kültür Portalı</span>
+            <span class="badge" style="margin: 0; font-size: 0.75rem; padding: 3px 10px; border-color: rgba(255, 215, 0, 0.45); color: #ffe57f;">📖 907 Sayfa Orijinal Eser</span>
+            <span class="badge" style="margin: 0; font-size: 0.75rem; padding: 3px 10px;">🔍 874 Mitolojik Kavram</span>
+            <span class="badge" style="margin: 0; font-size: 0.75rem; padding: 3px 10px;">🏆 3.868 Soruluk Bilgi Yarışması</span>
+          </div>
+          <h3 style="font-size: 1.55rem; font-weight: 900; margin: 0 0 6px; color: #fff;">Türk Söylenceler Sözlüğü | Dijital Mitoloji ve Kültür Portalı</h3>
+          <div style="font-size: 0.84rem; color: var(--color-cyan-light); font-weight: 600; margin-bottom: 10px;">
+            Yazar: Deniz Karakurt • Dijital Mimari &amp; Site Tasarımı: Sertan Çubukcu • utrucce.github.io/Turk-Soylenceler-Sozlugu
+          </div>
+          <p class="text-justify" style="color: var(--text-secondary); margin: 0 0 16px; font-size: 0.94rem; line-height: 1.7;">
+            Açıklamalı Ansiklopedik Mitoloji Sözlüğü'nün 907 sayfalık orijinal belgesini <strong>Üç Boyutlu Sayfa Kıvrılma</strong> ve gerçek sayfa çevirme sesiyle okuma, Türkçe sesli okuma (TTS), 7 farklı okuma teması, 874 mitolojik kavram ve kökenbilim dizininde anlık arama ile 3.868 soruluk dört şıklı etkileşimli bilgi yarışmasını tek çatı altında buluşturan kapsamlı kültür portalı.
+          </p>
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <a href="https://utrucce.github.io/Turk-Soylenceler-Sozlugu/" target="_blank" rel="noopener noreferrer" class="btn btn-store" style="padding: 10px 20px; font-size: 0.88rem;">
+              🐺 Portalı Ziyaret Et (Canlı Yayın) &rarr;
+            </a>
+            <a href="https://github.com/Utrucce/Turk-Soylenceler-Sozlugu" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="padding: 10px 18px; font-size: 0.85rem;">
+              GitHub Deposu &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="web-grid">
+        <a href="https://pitraknusha.onrender.com/" target="_blank" rel="noopener noreferrer" class="web-card">
+          <div class="web-header">
+            <div class="web-icon-wrap">🏷️</div>
+            <div>
+              <h3 style="font-size: 1.15rem; color: #fff; margin: 0 0 2px;">Pıtrak Nüsha</h3>
+              <span class="web-url">pitraknusha.onrender.com</span>
+            </div>
+          </div>
+          <p class="web-desc text-justify">
+            Dijital etiketleme, metin tahlili ve soru arşivleme için geliştirilen modern bulut tabanlı internet aracı.
+          </p>
+          <div class="web-cta"><span>Siteyi Ziyaret Et</span> &rarr;</div>
+        </a>
+
+        <a href="https://radyotiyatrosu.onrender.com/" target="_blank" rel="noopener noreferrer" class="web-card">
+          <div class="web-header">
+            <div class="web-icon-wrap">🎙️</div>
+            <div>
+              <h3 style="font-size: 1.15rem; color: #fff; margin: 0 0 2px;">Radyo Tiyatrosu</h3>
+              <span class="web-url">radyotiyatrosu.onrender.com</span>
+            </div>
+          </div>
+          <p class="web-desc text-justify">
+            Klasik ve çağdaş radyo tiyatrosu kayıtlarını edebiyatseverlerle buluşturan çevrim içi sesli drama kütüphanesi.
+          </p>
+          <div class="web-cta"><span>Dinlemeye Başla</span> &rarr;</div>
+        </a>
+
+        <a href="https://alef-psikoloji.onrender.com/" target="_blank" rel="noopener noreferrer" class="web-card">
+          <div class="web-header">
+            <div class="web-icon-wrap">🧠</div>
+            <div>
+              <h3 style="font-size: 1.15rem; color: #fff; margin: 0 0 2px;">ALΣF Psikoloji</h3>
+              <span class="web-url">alef-psikoloji.onrender.com</span>
+            </div>
+          </div>
+          <p class="web-desc text-justify">
+            Öğretmen adayları ve öğrenciler için motivasyon, sınav kaygısı yönetimi ve rehberlik içerikleri platformu.
+          </p>
+          <div class="web-cta"><span>Platformu İncele</span> &rarr;</div>
+        </a>
+
+        <a href="https://utrucce.github.io/afed-dersleri/" target="_blank" rel="noopener noreferrer" class="web-card">
+          <div class="web-header">
+            <div class="web-icon-wrap">🚨</div>
+            <div>
+              <h3 style="font-size: 1.15rem; color: #fff; margin: 0 0 2px;">AFED Dersleri</h3>
+              <span class="web-url">utrucce.github.io/afed-dersleri</span>
+            </div>
+          </div>
+          <p class="web-desc text-justify">
+            Afet bilinci, acil durum yönetimi ve temel sivil savunma eğitim materyallerini içeren açık kaynaklı eğitim portalı.
+          </p>
+          <div class="web-cta"><span>Eğitimi İncele</span> &rarr;</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Telegram Ekosistemi -->
+    <section id="telegram-ekosistemi" style="margin: 50px 0 65px;">
+      <div class="section-head">
+        <div>
+          <h2>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-16.5 7.5a2.25 2.25 0 0 0 .126 4.073l4.35 1.5 1.5 4.35a2.25 2.25 0 0 0 4.073.126l7.5-16.5a2.25 2.25 0 0 0-1.527-1.264z"></path></svg>
+            Telegram Eğitim Botları &amp; Topluluklarımız
+          </h2>
+          <p class="text-justify">
+            Adaylarımıza anlık soru çözümü, edebiyat tahlili ve sınav desteği sunan Telegram servislerimiz:
+          </p>
+        </div>
+      </div>
+
+      <div class="telegram-grid">
+        <a href="https://t.me/PirtilTurkceBot" target="_blank" rel="noopener noreferrer" class="telegram-card">
+          <img src="assets/bot-pirtil.jpg" alt="Pırtıl Bot" class="telegram-thumb">
+          <div>
+            <h4 style="color: #fff; margin: 0 0 2px; font-size: 0.96rem;">Pırtıl Bot</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Türkçe ÖABT ve Soru Asistanı</span>
+          </div>
+        </a>
+
+        <a href="https://t.me/BayYazar_Bot" target="_blank" rel="noopener noreferrer" class="telegram-card">
+          <img src="assets/bot-bayyazar.jpg" alt="BayYazar Bot" class="telegram-thumb">
+          <div>
+            <h4 style="color: #fff; margin: 0 0 2px; font-size: 0.96rem;">BayYazar Bot</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Yazarlık &amp; Edebiyat Tahlili</span>
+          </div>
+        </a>
+
+        <a href="https://t.me/Mergen_DenemeBot" target="_blank" rel="noopener noreferrer" class="telegram-card">
+          <img src="assets/bot-mergen.jpg" alt="Mergen Bot" class="telegram-thumb">
+          <div>
+            <h4 style="color: #fff; margin: 0 0 2px; font-size: 0.96rem;">Mergen Bot</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Süreli Deneme Sınavları</span>
+          </div>
+        </a>
+
+        <a href="https://t.me/Kircil_Pehlivanbot" target="_blank" rel="noopener noreferrer" class="telegram-card">
+          <img src="assets/bot-kircil.jpg" alt="Kırçıl Bot" class="telegram-thumb">
+          <div>
+            <h4 style="color: #fff; margin: 0 0 2px; font-size: 0.96rem;">Kırçıl Pehlivan Bot</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Zorlu Edebiyat Soruları</span>
+          </div>
+        </a>
+
+        <a href="https://t.me/Berceste_EdebiBot" target="_blank" rel="noopener noreferrer" class="telegram-card">
+          <img src="assets/bot-berceste.jpg" alt="Berceste Bot" class="telegram-thumb">
+          <div>
+            <h4 style="color: #fff; margin: 0 0 2px; font-size: 0.96rem;">Mısra-ı Berceste</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Şiir &amp; Edebi Sanatlar</span>
+          </div>
+        </a>
+
+        <a href="https://t.me/Pitrak_EtiketBot" target="_blank" rel="noopener noreferrer" class="telegram-card">
+          <img src="assets/bot-pitrak.jpg" alt="Pıtrak Bot" class="telegram-thumb">
+          <div>
+            <h4 style="color: #fff; margin: 0 0 2px; font-size: 0.96rem;">Pıtrak Etiket Bot</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Akıllı Dizin ve Etiketleme</span>
+          </div>
+        </a>
+
+        <a href="https://t.me/Ahlak_KalkanBot" target="_blank" rel="noopener noreferrer" class="telegram-card">
+          <img src="assets/bot-asayis.jpg" alt="Asayiş Bot" class="telegram-thumb">
+          <div>
+            <h4 style="color: #fff; margin: 0 0 2px; font-size: 0.96rem;">Asayiş Berkemal</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Manevi Kalkan ve Ahlak</span>
+          </div>
+        </a>
+
+        <a href="https://t.me/pirtillaturkceoabt" target="_blank" rel="noopener noreferrer" class="telegram-card">
+          <img src="assets/bot-muallim.jpg" alt="Topluluk" class="telegram-thumb">
+          <div>
+            <h4 style="color: #fff; margin: 0 0 2px; font-size: 0.96rem;">Akademi Pırtılları</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Telegram Tartışma Grubu</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Sosyal Medya ve İletişim Kanallarımız -->
+    <section id="iletisim" style="margin: 50px 0 65px;">
+      <div class="section-head">
+        <div>
+          <h2>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            Sosyal Medya ve İletişim Kanallarımız
+          </h2>
+          <p class="text-justify">Doğrudan geliştiriciye ulaşabileceğiniz resmi iletişim adreslerimiz:</p>
+        </div>
+      </div>
+
+      <div class="social-grid">
+        <a href="https://www.youtube.com/@1dakidat%C3%BCrk%C3%A7e%C3%B6abt" target="_blank" rel="noopener noreferrer" class="social-card">
+          <div class="social-icon-box" style="color: #ff0000; background: rgba(255, 0, 0, 0.1);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </div>
+          <div>
+            <h3 style="font-size: 1.05rem; margin: 0 0 2px; color: #fff;">YouTube</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">1 Dakikada Türkçe ÖABT</span>
+          </div>
+        </a>
+
+        <a href="https://www.instagram.com/sertancubukcu/" target="_blank" rel="noopener noreferrer" class="social-card">
+          <div class="social-icon-box" style="color: #e1306c; background: rgba(225, 48, 108, 0.1);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"></circle></svg>
+          </div>
+          <div>
+            <h3 style="font-size: 1.05rem; margin: 0 0 2px; color: #fff;">Instagram</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">@sertancubukcu</span>
+          </div>
+        </a>
+
+        <a href="https://www.linkedin.com/in/sertan%C3%A7ubukcu/" target="_blank" rel="noopener noreferrer" class="social-card">
+          <div class="social-icon-box" style="color: #0a66c2; background: rgba(10, 102, 194, 0.1);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </div>
+          <div>
+            <h3 style="font-size: 1.05rem; margin: 0 0 2px; color: #fff;">LinkedIn</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">Sertan Çubukcu</span>
+          </div>
+        </a>
+
+        <a href="mailto:sertancubukcu@gmail.com" class="social-card" data-copy-email>
+          <div class="social-icon-box" style="color: #ea4335; background: rgba(234, 67, 53, 0.1);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"></circle></svg>
+          </div>
+          <div>
+            <h3 style="font-size: 1.05rem; margin: 0 0 2px; color: #fff;">Gmail</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">sertancubukcu@gmail.com</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Altbilgi (Footer) - "Bütün hakları saklıdır" kuralına tam uyumlu -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="assets/kurt.png" alt="Kurt Arma" style="width: 34px; height: 34px; border-radius: 6px;">
+          <div>
+            <strong style="color: #fff; display: block; font-size: 1rem;">AL<span class="sigma">Σ</span>F Ekosistemi</strong>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Eğitim, Yayıncılık ve Dijital Yazılım Projeleri</span>
+          </div>
+        </div>
+        <div>
+          <a href="privacy.html" class="btn btn-outline" style="font-size: 0.84rem;">
+            Gizlilik Politikası &rarr;
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 AL<span class="sigma">Σ</span>F • Yazar &amp; Geliştirici: Sertan Çubukcu. Bütün hakları saklıdır.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Büyük Görüntüleyici (Lightbox Modal) -->
+  <div id="lightboxModal" class="lightbox-modal" role="dialog" aria-modal="true" aria-label="Görsel Büyütücü">
+    <button id="lightboxClose" class="lightbox-close" aria-label="Kapat">&times;</button>
+    <div class="lightbox-content">
+      <img id="lightboxImg" src="" alt="Genişletilmiş Görüntü">
+      <div id="lightboxCaption" class="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <!-- Bildirim Kutusu (Toast) -->
+  <div id="toastNotice" class="toast-notice"></div>
+
+  <script src="assets/three.min.js"></script>
+  <script>if (typeof THREE === 'undefined') { document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>'); }</script>
+  <script src="assets/rainyday.min.js"></script>
+  <script>if (typeof RainyDay === 'undefined') { document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/rainyday.js/0.1.2/rainyday.min.js"><\/script>'); }</script>
+  <script src="script.js"></script>
+</body>
+</html>
