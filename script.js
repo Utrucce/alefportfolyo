@@ -15,16 +15,443 @@
  */
 
 // ==========================================
-// 1. DİL SEÇİCİ (TR / EN / İKİSİ)
+// 1. TAM SİTE DİL MOTORU (TÜRKÇE / ENGLISH)
 // ==========================================
+const ALEF_I18N_MAP = {
+  "Balinayı Zıplat": "Jump the Whale",
+  "Tanıtım": "Overview",
+  "Uygulamalar": "Apps",
+  "Görüntüler": "Screenshots",
+  "Hâl Tercümesi": "Curriculum Vitae",
+  "Kitaplar & Mağaza": "Books & Store",
+  "İnternet Projeleri": "Web Projects",
+  "Telegram": "Telegram",
+  "İletişim": "Contact",
+  "Gizlilik İlkeleri": "Privacy Principles",
+  "Gizlilik Politikası": "Privacy Policy",
+  "Gizlilik Politikası →": "Privacy Policy →",
+  "Güvenlik İlkeleri": "Security Principles",
+  "Güvenlik İlkeleri →": "Security Principles →",
+  "Ana Sayfa": "Home",
+  "Ana Sayfaya Dön": "Back to Home",
+  "Ana Sayfaya Dön →": "Back to Home →",
+  "GDPR & KVKK": "GDPR & KVKK",
+  "Uygulama Görüntüleri": "App Screenshots",
+  "Yayınlar": "Publications",
+  "EğitimYayın & Kitaplar": "EğitimYayın & Books",
+  "🐺 Türk Söylenceler Sözlüğü": "🐺 Dictionary of Turkic Myths",
+  "Öğretmenlik ve Millî Eğitim Akademisi Hazırlık Portalı": "Teaching & National Education Academy Preparation Portal",
+  "Öğretmenlik ve Akademi Yolunda": "On the Path to Teaching and the Academy",
+  "F ile Zirveye Adım At": "F — Step to the Peak",
+  "Millî Eğitim Bakanlığı Akademi Giriş Sınavı (M": "A complete educational ecosystem meticulously developed for Republic of Türkiye Ministry of National Education Academy Entrance Exam (M",
+  "B - AGS) ve Türkçe ÖABT adayları için titizlikle geliştirilen kapsamlı soru havuzu, deneme sınavları, konu özetleri,": "B - AGS) and Turkish Teaching (ÖABT) candidates, featuring an extensive question bank, practice exams, topic summaries,",
+  "EğitimYayın Mağazası": "EğitimYayın Store",
+  "Google Play Kitapları": "Google Play Books",
+  "Türk Söylenceler Sözlüğü": "Dictionary of Turkic Myths",
+  "dijital kültür portalı, canlı internet platformları, 8 adet etkileşimli Telegram eğitim botu ve geliştirilmekte olan yeni nesil Android uygulamalarıyla eksiksiz bir eğitim ekosistemi.": "digital culture portal, live web platforms, 8 interactive Telegram educational bots, and next-generation Android applications.",
+  "Google Play Store • EğitimYayın • KVKK • GDPR Uyumlu Resmî Güvenlik Belgesi": "Official Security Document Compliant with Google Play Store • EğitimYayın • KVKK • GDPR",
+  "Gizlilik Politikası ve Güvenlik Protokolü": "Privacy Policy and Security Protocol",
+  "Bu Gizlilik Politikası ve Güvenlik Protokolü; geliştirici ve yazar Sertan Çubukcu tarafından geliştirilen ve yayınlanan": "This Privacy Policy and Security Protocol is the complete and official security statement for",
+  "BÜTÜN mobil uygulamalar": "ALL mobile applications",
+  "F EKYS, İslam Vakti: Omuz Omuza, Kıble Bulucu, Karargâh, Mergen, Pırtıl, Asayiş Berko ve gelecekte yayınlanacak bütün sürümler), EğitimYayın Mağazası, Google Play Kitapları, çevrim içi internet servisleri ve Telegram eğitim botları ekosistemi için eksiksiz ve resmi güvenlik beyanıdır.": "F EKYS, Islamic Time: Shoulder to Shoulder, Qibla Finder, Karargâh, Mergen, Pırtıl, Asayiş Berko, and all future releases) developed and published by developer and author Sertan Çubukcu, as well as the EğitimYayın Store, Google Play Books, online web services, and the Telegram educational bots ecosystem.",
+  "Son Güncelleme:": "Last Updated:",
+  "Ekim 2026 / October 2026": "October 2026",
+  "• Sürüm:": "• Version:",
+  "Android Mobil Hazırlık Uygulaması": "Android Mobile Preparation App",
+  "Alan Bilgisi Hazırlık Platformu": "Field Knowledge Preparation Platform",
+  "Geliştirici & Yazar Kurumsal Kimliği": "Developer & Author Corporate Identity",
+  "Kurt Arma": "Wolf Crest",
+  "Özgün Mühür & Güvenlik Simgesi": "Original Seal & Security Emblem",
+  "Mobil Uygulamalarımız": "Our Mobile Applications",
+  "Adaylarımızın sınav hazırlığında ve günlük manevi yaşamında doğrudan kullandığı, hem telefondan hem de bilgisayardan gerçek logolarıyla sunulan mobil platformlarımız:": "Our mobile platforms presented with their authentic logos, directly used by candidates in exam preparation and daily spiritual life:",
+  "Millî Eğitim Akademisi Hazırlık": "National Education Academy Prep",
+  "✓ Yayında": "✓ Live",
+  "10.990+ Soru": "10,990+ Questions",
+  "Akademi Giriş Sınavı müfredatına tam uyumlu deneme sınavları, mevzuat soru bankası, bilgi kartları ve internetsiz çalışma desteği.": "Practice exams fully aligned with the Academy Entrance Exam curriculum, legislation question bank, flashcards, and offline study support.",
+  "Ekran Görüntüleri →": "Screenshots →",
+  "İncele →": "Explore →",
+  "Telegram Botu →": "Telegram Bot →",
+  "Alan Bilgisi ve Eğitimi": "Subject Knowledge & Education",
+  "Edebiyat & Dil": "Literature & Language",
+  "Eski Türk Dili, Yeni Türk Edebiyatı, Halk Edebiyatı ve Alan Eğitimi modülleriyle Türkçe öğretmen adaylarına özel akademik hazırlık platformu.": "Academic preparation platform tailored for Turkish language teacher candidates with Old Turkic Language, Modern Turkish Literature, Folk Literature, and Field Education modules.",
+  "Genel Yetenek & Genel Kültür": "General Aptitude & General Culture",
+  "ÖSYM Formatı": "ÖSYM Format",
+  "Tarih, Coğrafya, Vatandaşlık ve Türkçe alanlarında tam kapsamlı soru havuzu, denemeler ve detaylı çözümler.": "Comprehensive question pool, practice exams, and detailed solutions in History, Geography, Civics, and Turkish.",
+  "Eğitim Kurumları Yöneticiliği": "Educational Institutions Management",
+  "Mevzuat & Yönetim": "Legislation & Management",
+  "Müdür ve müdür yardımcılığı sınavlarına hazırlanan eğitimciler için güncel mevzuat testleri ve deneme modülleri.": "Up-to-date legislation tests and practice exam modules for educators preparing for principal and vice-principal exams.",
+  "İslam Vakti: Omuz Omuza": "Islamic Time: Shoulder to Shoulder",
+  "Manevi Yaşam & İbadet": "Spiritual Life & Worship",
+  "Çevrim Dışı": "Offline",
+  "Namaz vakitleri, zikirçeker, manevi bahçe ve irfan kartları içeren kullanıcı dostu mobil manevi yaşam rehberi.": "User-friendly mobile spiritual life guide featuring prayer times, dhikr counter, spiritual garden, and wisdom cards.",
+  "Kıble Bulucu": "Qibla Finder",
+  "Pusula ve Harita Destekli": "Compass & Map Supported",
+  "Hassas Açı": "Precision Angle",
+  "Cihazın donanım pusulasını kullanarak konumu sunucuya iletmeden anlık yerel matematiksel açıyla kıble tayini yapar.": "Determines Qibla direction with real-time local mathematical angle calculation using the device's hardware compass without transmitting location to any server.",
+  "Veri ve Telefon Güvenliği": "Data & Phone Security",
+  "Güvenlik & Gizlilik": "Security & Privacy",
+  "Kullanıcı verilerinin cihaz içinde güvenle saklanması ve telefon güvenliğinin denetlenmesi için geliştirilen yerel güvenlik kalkanı.": "Local security shield developed for storing user data safely on-device and auditing phone security.",
+  "Akıl ve Strateji Motoru": "Mind & Strategy Engine",
+  "Eğitim AR-GE": "Education R&D",
+  "Soru analiz algoritmaları ve sınav stratejileri geliştiren akıllı soru tahlil asistanı.": "Intelligent question analysis assistant that develops question analysis algorithms and exam strategies.",
+  "Yerel Sûnî Zekâ": "On-Device Artificial Intelligence",
+  "İnternetsiz Model": "Offline Model",
+  "Eğitilmek üzere olan, doğrudan telefonda çalışan ve hiçbir internet bağlantısına ihtiyaç duymayan yerel sûnî zekâ çekirdeği.": "On-device artificial intelligence core currently in training that runs directly on the phone without requiring any internet connection.",
+  "Dijital Güvenlik ve Emniyet": "Digital Security & Safety",
+  "Yerel Denetim": "Local Audit",
+  "Zararlı içerikleri filtreleyen ve dijital cihaz emniyetini sağlayan koruyucu mobil güvenlik çözümü.": "Protective mobile security solution that filters harmful content and ensures digital device safety.",
+  "F Uygulama Ekran Görüntüleri": "F Application Screenshots",
+  "Uygulama Ekran Görüntüleri": "Application Screenshots",
+  "Mobil uygulamalarımızın modern arayüzü, soru çözüm modülleri ve manevi araçları (Büyütmek için görsele tıklayın):": "Modern interface, question-solving modules, and spiritual tools of our mobile applications (Click on an image to enlarge):",
+  "Uygulamalarımızın mobil arayüzleri, test modülleri ve güvenlik mimarisi (Büyütmek için tıklayın):": "Mobile interfaces, test modules, and security architecture of our applications (Click to enlarge):",
+  "Giriş ve Ana Menü": "Home & Main Menu",
+  "Modül ve Konu Seçimi": "Module & Topic Selection",
+  "Soru Listesi & Filtreler": "Question List & Filters",
+  "Soru Çözümü & Açıklamalar": "Question Solving & Explanations",
+  "Performans İstatistikleri": "Performance Statistics",
+  "Zaman Ayarlı Deneme Sınavı": "Timed Practice Exam",
+  "Kişiselleştirilmiş Notlar": "Personalized Notes",
+  "Sınav Geri Sayımı & Raporlar": "Exam Countdown & Reports",
+  "Namaz Vakitleri & Sayaç": "Prayer Times & Countdown",
+  "Kıble Pusulası & Konum": "Qibla Compass & Location",
+  "Manevi Bahçe & Çiftlik": "Spiritual Garden & Farm",
+  "Zikirçeker & Manevi Zincir": "Dhikr Counter & Spiritual Chain",
+  "İslami Araçlar & Keşfet": "Islamic Tools & Explore",
+  "Utrucce İrfan Kartları": "Utrucce Wisdom Cards",
+  "Hüdhüd Güvenli Tarayıcı": "Hüdhüd Secure Browser",
+  "Pırtıl Medya Oynatıcı": "Pırtıl Media Player",
+  "📄 Hâl Tercümesi Belgesi Al": "📄 Get Curriculum Vitae Document",
+  "ALΣF • Yıldız Teknik Üniversitesi": "ALΣF • Yıldız Technical University",
+  "📍 İstanbul, Türkiye": "📍 Istanbul, Türkiye",
+  "Hakkında": "About",
+  "Gelişime açık bir öğretmen adayı olarak; Türkçe Öğretmenliği alanında edindiğim; lisans eğitimi sayesinde eğitim dünyasında uzmanlaşmayı hedefliyorum. Ayrıca gönüllü öğretmenlik tecrübem vesilesiyle modern eğitim tekniklerini ve yenilikçi yaklaşımları sınıf ortamına entegre edebilme becerim gelişmektedir. Çevrim içi ve fiziksel eğitim ortamlarındaki fırsatları takip ederek; sürekli gelişmeyi ve hayat boyu eğitim anlayışını benimsemekteyim. Farklı iş tecrübelerimden edindiğime göre; en çok insan odaklı ve insanlarla iletişime girdiğim işlerin bana uygun olduğunu ve insanlarla sağlıklı iletişim kurduğumda; mutlu olduğumu; fark ettim. Öğretmenlik mesleğinin gerektirdiği; pedogojik uzmanlığa ek olarak; dijital yetkinlik için farklı eğitimler almaktayım. Aldığım eğitimleri; beceriye dönüştürerek; insanlık için faydalı ürünler ve hizmetler üretmeyi amaçlamaktayım.": "As an open-minded teacher candidate, I aim to specialize in the field of education thanks to my undergraduate degree in Turkish Language Teaching. Furthermore, through my volunteer teaching experience, my ability to integrate modern educational techniques and innovative approaches into the classroom environment continues to grow. By following opportunities in both online and physical learning environments, I embrace continuous self-improvement and lifelong learning. Based on my diverse work experiences, I have realized that human-centered roles involving direct interaction suit me best, and that establishing healthy communication with people brings me happiness. In addition to the pedagogical expertise required by the teaching profession, I pursue various training programs for digital competence. By transforming the training I receive into practical skills, I aim to produce beneficial products and services for humanity.",
+  "Deneyim": "Experience",
+  "8 Deneyim": "8 Experiences",
+  "Oca 2026 - Devam ediyor · 11 ay": "Jan 2026 - Present · 11 mos",
+  "Eğitim İçerik Üreticisi": "Educational Content Creator",
+  "ALΣF · Kendi işim • İstanbul, Türkiye · Ofiste": "ALΣF · Self-employed • Istanbul, Türkiye · On-site",
+  "Sunî zekâ destekli eğitim uygulamaları geliştirmekteyim. Bu projede PyCharm, Android Studio, Claude, Antigravity, Gemini, Codex, Termux, Github gibi araçlar kullanmaktayım. Soru üretimi, infografik vb. eğitim uygulamaları yaptım. Telegram botu, internet uygulamaları, editörlük uygulamaları, Android uygulamalar yaptım bu projede.": "I develop artificial intelligence-powered educational applications. In this project, I use tools such as PyCharm, Android Studio, Claude, Antigravity, Gemini, Codex, Termux, and GitHub. I have created educational applications for question generation, infographics, and more, including Telegram bots, web applications, editorial tools, and Android applications.",
+  "Eyl 2024 - Tem 2026 · 1 yıl 11 ay": "Sep 2024 - Jul 2026 · 1 yr 11 mos",
+  "Gönüllü Türkçe Öğretmeni": "Volunteer Turkish Teacher",
+  "Okul Destek Derneği · Serbest çalışan • Türkiye · Uzaktan": "School Support Association (Okul Destek Derneği) · Freelance • Türkiye · Remote",
+  "Ükemizdeki devlet okullarında okuyan öğrencilere uzaktan eğitim yoluyla haftada 2 saat Türkçe kod sistemini doğru kullanmalarını sağlamak için onlara yardımcı olmaktayım. Öğrencilerin yazma vazifelerine geribildirim vererek; onların üretim süreçlerine katkı sunmaktayım.": "I assist students attending public schools in our country for 2 hours a week via distance education to help them use the Turkish language code system accurately. By providing feedback on students' writing assignments, I contribute to their creative and productive processes.",
+  "Nis 2023 - Ağu 2025 · 2 yıl 5 ay": "Apr 2023 - Aug 2025 · 2 yrs 5 mos",
+  "Depo Vazifelisi-Dönemsel (Serbest-Günlük)": "Warehouse Associate - Seasonal (Freelance-Daily)",
+  "Aygaz A.Ş. · Serbest çalışan • Avcılar, İstanbul, Türkiye · Ofiste": "Aygaz A.Ş. · Freelance • Avcılar, Istanbul, Türkiye · On-site",
+  "Ara 2024 - Mar 2025 · 4 ay": "Dec 2024 - Mar 2025 · 4 mos",
+  "Öğretmen Yetiştirme Programı": "Teacher Training Program",
+  "Çınar Koleji · Stajyer • Başakşehir, İstanbul, Türkiye · Ofiste": "Çınar College · Intern • Başakşehir, Istanbul, Türkiye · On-site",
+  "Eki 2023 - Haz 2024 · 9 ay": "Oct 2023 - Jun 2024 · 9 mos",
+  "Öğretmenlik Uygulaması-Esenler Yunus Emre Ortaokulu": "Teaching Practicum - Esenler Yunus Emre Middle School",
+  "Türkiye Cumhuriyeti Millî Eğitim Bakanlığı · Yarı zamanlı • Esenler, İstanbul, Türkiye": "Republic of Türkiye Ministry of National Education · Part-time • Esenler, Istanbul, Türkiye",
+  "Üniversite mecburi dersi olarak aldığım; öğretmenlik uygulaması sayesinde okul ekosisteminin dinamiklerini tanıma fırsatı buldum. Öğrencileri gözlemleyerek; onların öğrenme stratejilerini fark etmeye çalıştım.": "Through the mandatory university teaching practicum course, I had the opportunity to experience the dynamics of the school ecosystem firsthand. By observing students, I worked on identifying and understanding their learning strategies.",
+  "Şub 2020 - Ağu 2020 · 7 ay": "Feb 2020 - Aug 2020 · 7 mos",
+  "Kargo Çalışanı": "Cargo Operations Staff",
+  "MNG Kargo - a company of DHL · Tam zamanlı • Esenyurt, İstanbul, Türkiye": "MNG Kargo - a company of DHL · Full-time • Esenyurt, Istanbul, Türkiye",
+  "May 2018 - Oca 2019 · 9 ay": "May 2018 - Jan 2019 · 9 mos",
+  "Paketleme Elemanı": "Packaging Associate",
+  "Tempo Şekerleme · Tam zamanlı • Arnavutköy, İstanbul, Türkiye": "Tempo Confectionery · Full-time • Arnavutköy, Istanbul, Türkiye",
+  "Mar 2016 - Ağu 2016 · 6 ay": "Mar 2016 - Aug 2016 · 6 mos",
+  "Kasiyer": "Cashier",
+  "Şok Marketler · Tam zamanlı • Esenyurt, İstanbul, Türkiye": "Şok Markets · Full-time • Esenyurt, Istanbul, Türkiye",
+  "Eğitim": "Education",
+  "3 Eğitim": "3 Educations",
+  "Eyl 2021 – Oca 2025": "Sep 2021 – Jan 2025",
+  "Yıldız Teknik Üniversitesi": "Yıldız Technical University",
+  "Lisans Derecesi, Türkçe Öğretmenliği": "Bachelor's Degree, Turkish Language Teaching",
+  "Eki 2025 – Devam ediyor": "Oct 2025 – Present",
+  "İstanbul Üniversitesi-Cerrahpaşa": "Istanbul University-Cerrahpaşa",
+  "Spor İdareciliği": "Sports Management",
+  "Eyl 2011 – Haz 2015": "Sep 2011 – Jun 2015",
+  "Çakmaklı Cumhuriyet Anadolu Lisesi": "Çakmaklı Cumhuriyet Anatolian High School",
+  "Lise, Eşit Ağırlık": "High School Diploma, Equal Weight Track",
+  "Projeler & Yayınlar": "Projects & Publications",
+  "1 Proje • 1 Yayın": "1 Project • 1 Publication",
+  "Proje": "Project",
+  "Sosyal Aidiyet ve Okuma Performansına İlişkisinde Aile Motivasyonunun Aracılığı: PISA Tabanlı İkincil Bir Analiz": "The Mediating Role of Family Motivation in the Relationship Between Social Belonging and Reading Performance: A PISA-Based Secondary Analysis",
+  "2209-A - Üniversite Öğrencileri Araştırma Projeleri Destekleme Programı": "TÜBİTAK 2209-A - University Students Research Projects Support Program",
+  "Rakuten Kobo · 13 May 2025": "Rakuten Kobo · May 13, 2025",
+  "Utrucce-Fantastik Hikâye": "Utrucce - Fantasy Story",
+  "📖 Yayını göster ↗": "📖 Show publication ↗",
+  "Gönüllü Çalışma": "Volunteering",
+  "8 Gönüllü Çalışma": "8 Volunteering Roles",
+  "Ara 2021 - Devam ediyor · 5 yıl": "Dec 2021 - Present · 5 yrs",
+  "Gönüllü Çalışan, Editör": "Volunteer Staff, Editor",
+  "Dil Akademisi • Eğitim": "Language Academy • Education",
+  "Haz 2017 - Devam ediyor · 9 yıl 6 ay": "Jun 2017 - Present · 9 yrs 6 mos",
+  "Bağış Gönüllüsü": "Donation Volunteer",
+  "Kızılay • Sağlık": "Turkish Red Crescent (Kızılay) • Health",
+  "Kas 2025 - Devam ediyor · 1 yıl 1 ay": "Nov 2025 - Present · 1 yr 1 mo",
+  "Metin Okuyucusu": "Text Reader for the Visually Impaired",
+  "Ders Ortağım Projesi • Sosyal Hizmetler": "My Study Partner Project • Social Services",
+  "Görme engelli kardeşlerimize ilgili metinleri okumaktayım.": "I read educational and literary texts aloud for our visually impaired brothers and sisters.",
+  "Eyl 2025 - May 2026 · 9 ay": "Sep 2025 - May 2026 · 9 mos",
+  "Okul Destek Derneği • Eğitim": "School Support Association (Okul Destek Derneği) • Education",
+  "Eki 2025 - Devam ediyor · 1 yıl 2 ay": "Oct 2025 - Present · 1 yr 2 mos",
+  "Destek Ekip Gönüllüsü": "Support Team Volunteer",
+  "T.C. İçişleri Bakanlığı Afet ve Acil Durum Yönetimi Başkanlığı - AFAD • Felaket ve İnsani Yardım": "Republic of Türkiye Ministry of Interior Disaster and Emergency Management Presidency (AFAD) • Disaster and Humanitarian Relief",
+  "Destek ekip gönüllüsü olarak çadır kurma, profesyonel ekiplerin verdiği talimatlar doğrultusunda arama-kurtarma faaliyetlerinde bulunma gibi vazifeler yapmaktayım. Bu süreçte arama ve kurtarma, sosyal yardım, yangın, ilkyardım gibi konularda, afet ve acil durum hallerinde profesyonel ekiplere destek olabilecek bilgi ve beceriye sahip olacak eğitimler almaktayım.": "As a support team volunteer, I perform duties such as setting up tents and participating in search and rescue operations under the guidance of professional teams. Throughout this process, I receive training in search and rescue, social aid, fire safety, and first aid to acquire the knowledge and skills needed to support professional teams during disasters and emergencies.",
+  "Tem 2026 - Devam ediyor · 5 ay": "Jul 2026 - Present · 5 mos",
+  "ALΣF • Eğitim": "ALΣF • Education",
+  "Android uygulama geliştirme süreçlerinde çalışıyorum. Ayrıca içerikleri üretmekten sorumluyum. Soru hazırlamaktayım.": "I work on Android application development processes and am responsible for content production and question authoring.",
+  "Etkinlik Görevlisi": "Event Coordinator",
+  "İBB Spor İstanbul • Sosyal Hizmetler": "IMM Spor Istanbul • Social Services",
+  "Şub 2018 - Devam ediyor · 8 yıl 10 ay": "Feb 2018 - Present · 8 yrs 10 mos",
+  "Gönüllü Çalışan": "Volunteer Staff",
+  "T.C. Gençlik ve Spor Bakanlığı • Kültür ve Sanat": "Republic of Türkiye Ministry of Youth and Sports • Culture and Arts",
+  "Lisanslar ve sertifikalar (53)": "Licenses & Certifications (53)",
+  "Her sertifikanın altındaki bağlantıya tıklayarak resmi yeterlilik belgesini görüntüleyebilirsiniz": "Click the link below each certificate to view the official credential document",
+  "📄 Yeterlilik belgesini göster ↗": "📄 Show credential ↗",
+  "Gönüllü Eğitmen Sertifikası": "Volunteer Instructor Certificate",
+  "Okul Destek Derneği": "School Support Association (Okul Destek Derneği)",
+  "YetGen Öğretmen Eğitim Programı TR": "YetGen Teacher Training Program TR",
+  "Yetkin Gençler": "Yetkin Gençler (Competent Youth)",
+  "Eğitimde Farklılaştırma Stratejileri": "Differentiation Strategies in Education",
+  "Enstitü Sosyal": "Enstitü Sosyal (Social Institute)",
+  "Nitelikli Eğitim, BM Kalkınma Hedefleri": "Quality Education, UN Sustainable Development Goals",
+  "Eğitimde Oyunlaştırma ve İnternet 2.0 Araçları": "Gamification in Education and Web 2.0 Tools",
+  "BTK Akademi": "BTK Academy",
+  "Educast İnternational Confererence 2025": "Educast International Conference 2025",
+  "Veri Bilimi İçin Temel İstatistik": "Fundamental Statistics for Data Science",
+  "Oyun Terapisi Eğitimi": "Play Therapy Training",
+  "İstanbul İşletme Enstitüsü": "Istanbul Institute of Business",
+  "Microsoft Word Temelleri": "Microsoft Word Fundamentals",
+  "Etkili Sunum Teknikleri": "Effective Presentation Techniques",
+  "İGEDER İstanbul Gönüllü Eğitimciler Derneği": "İGEDER Istanbul Volunteer Educators Association",
+  "Canva Dijital Öğretmenler Zirvesi": "Canva Digital Teachers Summit",
+  "Etkin Kampüs": "Etkin Kampüs",
+  "Zaman Yönetimi": "Time Management",
+  "Öğretmenin Psikolojik Dayanıklılığı": "Psychological Resilience of the Teacher",
+  "Geleceğin Öğretmen Zirvesi '24": "Teacher of the Future Summit '24",
+  "Sıra Dışı Öğretim Teknikleri": "Extraordinary Teaching Techniques",
+  "Bütünsel Gelişim Eğitimi": "Holistic Development Training",
+  "YETEV Eğitim Teknolojileri Zirvesi '24": "YETEV Educational Technologies Summit '24",
+  "B1 İngilizce": "B1 English Certificate",
+  "Veri Bilimine Giriş": "Introduction to Data Science",
+  "Etkili İletişim Stratejileri": "Effective Communication Strategies",
+  "Dijital Hikâyeler-Hikâye Anlatma Tekniklerinde Akademik Başarı Uygulamalarını Artırarak Erken Okul Terkini Azaltma, Erasmus+ Projesi, Modüller": "Digital Stories - Reducing Early School Leaving by Increasing Academic Success Practices in Storytelling Techniques, Erasmus+ Project, Modules",
+  "Türkiye Cumhuriyeti Millî Eğitim Bakanlığı": "Republic of Türkiye Ministry of National Education",
+  "Kariyeri Tehdit Eden Yaklaşımlar": "Career-Threatening Approaches",
+  "Etkili Geribildirim Eğitimi (Socrative, Plickers, Menti)": "Effective Feedback Training (Socrative, Plickers, Menti)",
+  "TÜBİTAK 2209-A PROJESİ": "TÜBİTAK 2209-A PROJECT",
+  "Dijital Hikâyeler-Hikâye Anlatma Tekniklerinde Akademik Başarı Uygulamalarını Artırarak Erken Okul Terkini Azaltma, Erasmus+ Projesi Kapanış Sunumu": "Digital Stories - Reducing Early School Leaving by Increasing Academic Success Practices in Storytelling Techniques, Erasmus+ Project Closing Presentation",
+  "4. İstanbul '24 Eğitim Zirvesi": "4th Istanbul '24 Education Summit",
+  "TÜRKİYE MAARİF VAKFI": "Turkish Maarif Foundation",
+  "Çocuk ve Felsefe Bilgilendirme Semineri": "Children and Philosophy Information Seminar",
+  "Arduino ile Robotiğe Giriş": "Introduction to Robotics with Arduino",
+  "İş İngilizcesi": "Business English",
+  "Sıkça Yapılan Yazım Yanlışları": "Frequently Made Spelling Mistakes",
+  "TRT Akademi": "TRT Academy",
+  "Farklı Bakışlarla Özel Eğitim Bilgilendirme Semineri": "Special Education Information Seminar from Different Perspectives",
+  "Karatay Üniversitesi Sürekli Eğitim Merkezi - KARSEM": "Karatay University Continuing Education Center - KARSEM",
+  "Zihin Haritaları Eğitimi": "Mind Mapping Training",
+  "Mangala, Mas Güreşi ve Geleneksel Okçuluk Eğitmen Eğitimi": "Mangala, Mas-Wrestling, and Traditional Archery Instructor Training",
+  "WORLD ETHNOSPORT UNİON": "World Ethnosport Union",
+  "İş Hayatında Oryantasyon": "Workplace Orientation",
+  "Esenyurt Belediyesi": "Esenyurt Municipality",
+  "Liderlik": "Leadership",
+  "T.C. İçişleri Bakanlığı Afet ve Acil Durum Yönetimi Başkanlığı - AFAD": "Republic of Türkiye Ministry of Interior Disaster and Emergency Management Presidency - AFAD",
+  "Kişisel Stres Yönetimi": "Personal Stress Management",
+  "Arama Faaliyetlerinde Kullanılan Düğümler": "Knots Used in Search and Rescue Operations",
+  "Afet Risklerini Azaltma": "Disaster Risk Reduction",
+  "Afet Risklerini Anlama": "Understanding Disaster Risks",
+  "Birey ve Aileler İçin Afet Bilinci Eğitimi": "Disaster Awareness Training for Individuals and Families",
+  "Ekranların Ötesinde Geleceğin Liderlerine İlham Vermek Semineri": "Inspiring Future Leaders Beyond Screens Seminar",
+  "Zor Öğrencilerle İletişim": "Communicating with Challenging Students",
+  "Eğitimde Oyunun Gücü": "The Power of Play in Education",
+  "Dijital Yaşam Becerileri": "Digital Life Skills",
+  "Atılganlık": "Assertiveness",
+  "Türkçenin Doğru Kullanımı": "Proper Use of the Turkish Language",
+  "Hızlı ve Etkili Okuma Teknikleri Bilgilendirme Semineri": "Fast and Effective Reading Techniques Information Seminar",
+  "Topluluk Önünde Konuşma ve Etkili Sunum Teknikleri": "Public Speaking and Effective Presentation Techniques",
+  "Problem Çözme Teknikleri": "Problem Solving Techniques",
+  "72 Saatlik Bilgisayarsız Robotik Kodlama": "72-Hour Unplugged Robotics Coding",
+  "Motivasyon 3.0 Eğitimi": "Motivation 3.0 Training",
+  "Bionluk Uzman Hizmeti": "Bionluk Expert Service",
+  "utrucce - Metin ve Video Editörü | Bionluk": "utrucce - Text & Video Editor | Bionluk",
+  "Metin tahlili, soru kitapçığı redaksiyonu, kitap mizanpajı, video montajı ve profesyonel editörlük hizmetleri için Bionluk profilimizi ziyaret edebilirsiniz.": "Visit our Bionluk profile for text analysis, question booklet proofreading, book layout design, video editing, and professional editorial services.",
+  "Metin tahlili, soru kitapçığı redaksiyonu, kitap mizanpajı ve profesyonel editörlük hizmetleri için Bionluk profilimizi ziyaret edebilirsiniz.": "Visit our Bionluk profile for text analysis, question booklet proofreading, book layout design, and professional editorial services.",
+  "Bionluk Profiline Git →": "Visit Bionluk Profile →",
+  "Yayın Mağazası & Google Play Kitapları": "Publishing Store & Google Play Books",
+  "Sertan Çubukcu tarafından kaleme alınan lisanslı eğitim yayınları, soru bankaları ve dijital eserler:": "Licensed educational publications, question banks, and digital works authored by Sertan Çubukcu:",
+  "Sertan Çubukcu tarafından kaleme alınan lisanslı eğitim yayınları ve dijital eserler:": "Licensed educational publications and digital works authored by Sertan Çubukcu:",
+  "Resmî Satış & Dağıtım Mağazası": "Official Sales & Distribution Store",
+  "Türkçe Öğretmenliği ÖABT ve Millî Eğitim Akademisi hazırlık soru bankaları ve özel deneme setleri güvenli satış portalı.": "Secure sales portal for Turkish Teaching (ÖABT) and National Education Academy preparation question banks and practice exam sets.",
+  "EğitimYayın Mağazasına Git →": "Go to EğitimYayın Store →",
+  "Google Play'de İncele": "View on Google Play",
+  "Pırtıl Terakki-2, Türkçe ÖABT": "Pırtıl Terakki-2, Turkish ÖABT",
+  "Türkçe ÖABT Denemesi, Pırtıl-Terakki": "Turkish ÖABT Practice Exam, Pırtıl-Terakki",
+  "Halk Edebiyatı - Girizgâh": "Folk Literature - Introduction",
+  "2024 Maarif Karikatürleştirilmiş Çıktılar": "2024 Maarif Illustrated Learning Outcomes",
+  "Mihenk Zühre / Türkçe ÖABT": "Mihenk Zühre / Turkish ÖABT",
+  "Türkçe ÖABT Denemesi / Pırtlak-1": "Turkish ÖABT Practice Exam / Pırtlak-1",
+  "Canlı İnternet Platformları": "Live Web Platforms",
+  "Geliştirici Sertan Çubukcu tarafından kurulan ve yayında olan çevrim içi internet servisleri:": "Online web services founded and maintained by developer Sertan Çubukcu:",
+  "✓ Yayında • Dijital Kültür Portalı": "✓ Live • Digital Culture Portal",
+  "📖 907 Sayfa Orijinal Eser": "📖 907-Page Original Work",
+  "🔍 874 Mitolojik Kavram": "🔍 874 Mythological Concepts",
+  "🏆 3.868 Soruluk Bilgi Yarışması": "🏆 3,868-Question Trivia Quiz",
+  "Türk Söylenceler Sözlüğü | Dijital Mitoloji ve Kültür Portalı": "Dictionary of Turkic Myths | Digital Mythology & Culture Portal",
+  "Yazar: Deniz Karakurt • Dijital Mimari & Site Tasarımı: Sertan Çubukcu • utrucce.github.io/Turk-Soylenceler-Sozlugu": "Author: Deniz Karakurt • Digital Architecture & Web Design: Sertan Çubukcu • utrucce.github.io/Turk-Soylenceler-Sozlugu",
+  "Açıklamalı Ansiklopedik Mitoloji Sözlüğü'nün 907 sayfalık orijinal belgesini": "A comprehensive culture portal uniting the 907-page original Annotated Encyclopedic Mythology Dictionary with",
+  "Üç Boyutlu Sayfa Kıvrılma": "3D Page-Curl Flipbook",
+  "ve gerçek sayfa çevirme sesiyle okuma, Türkçe sesli okuma (TTS), 7 farklı okuma teması, 874 mitolojik kavram ve kökenbilim dizininde anlık arama ile 3.868 soruluk dört şıklı etkileşimli bilgi yarışmasını tek çatı altında buluşturan kapsamlı kültür portalı.": "and realistic page-flip audio, Turkish text-to-speech (TTS), 7 reading themes, instant search across 874 mythological concepts and etymology index, plus an interactive 3,868-question multiple-choice quiz.",
+  "🐺 Portalı Ziyaret Et (Canlı Yayın) →": "🐺 Visit Live Portal →",
+  "Dijital etiketleme, metin tahlili ve soru arşivleme için geliştirilen modern bulut tabanlı internet aracı.": "Modern cloud-based web tool developed for digital tagging, text analysis, and question archiving.",
+  "Siteyi Ziyaret Et": "Visit Website",
+  "Radyo Tiyatrosu": "Radio Drama Theater",
+  "Klasik ve çağdaş radyo tiyatrosu kayıtlarını edebiyatseverlerle buluşturan çevrim içi sesli drama kütüphanesi.": "Online audio drama library bringing classic and contemporary radio theater recordings to literature enthusiasts.",
+  "Dinlemeye Başla": "Start Listening",
+  "ALΣF Psikoloji": "ALΣF Psychology",
+  "Öğretmen adayları ve öğrenciler için motivasyon, sınav kaygısı yönetimi ve rehberlik içerikleri platformu.": "Motivation, exam anxiety management, and guidance content platform for teacher candidates and students.",
+  "Platformu İncele": "Explore Platform",
+  "AFED Dersleri": "AFED Disaster Courses",
+  "Afet bilinci, acil durum yönetimi ve temel sivil savunma eğitim materyallerini içeren açık kaynaklı eğitim portalı.": "Open-source educational portal featuring disaster awareness, emergency management, and basic civil defense training materials.",
+  "Eğitimi İncele": "Explore Training",
+  "Telegram Eğitim Botları & Topluluklarımız": "Our Telegram Educational Bots & Communities",
+  "Adaylarımıza anlık soru çözümü, edebiyat tahlili ve sınav desteği sunan Telegram servislerimiz:": "Our Telegram services offering instant question solving, literary analysis, and exam support to candidates:",
+  "Türkçe ÖABT ve Soru Asistanı": "Turkish ÖABT & Question Assistant",
+  "Yazarlık & Edebiyat Tahlili": "Creative Writing & Literary Analysis",
+  "Süreli Deneme Sınavları": "Timed Practice Exams",
+  "Zorlu Edebiyat Soruları": "Challenging Literature Questions",
+  "Şiir & Edebi Sanatlar": "Poetry & Literary Arts",
+  "Akıllı Dizin ve Etiketleme": "Smart Indexing & Tagging",
+  "Manevi Kalkan ve Ahlak": "Spiritual Shield & Ethics",
+  "Telegram Tartışma Grubu": "Telegram Discussion Group",
+  "Sosyal Medya, Telegram Gruplarımız ve İletişim": "Social Media, Telegram Groups & Contact",
+  "Sosyal Medya ve İletişim Kanallarımız": "Our Social Media & Contact Channels",
+  "Doğrudan geliştiriciye ulaşabileceğiniz resmi iletişim adreslerimiz ve çalışma gruplarımız:": "Our official contact addresses and study groups where you can reach the developer directly:",
+  "Resmî iletişim ve destek adreslerimiz:": "Our official contact and support channels:",
+  "1 Dakikada Türkçe ÖABT": "Turkish ÖABT in 1 Minute",
+  "F Telegram Çalışma ve Anket Gruplarımız": "F Telegram Study & Poll Groups",
+  "ALΣF Türkçe ÖABT | Akademi Pırtılları 🐛🍊": "ALΣF Turkish ÖABT | Academy Pırtılları 🐛🍊",
+  "📚 Türkçe ÖABT Anket Grubu": "📚 Turkish ÖABT Poll Group",
+  "ALΣF Pırtılları YKS": "ALΣF Pırtılları YKS (University Exam)",
+  "F Ekosistemi": "F Ecosystem",
+  "Eğitim, Yayıncılık ve Dijital Yazılım Projeleri": "Education, Publishing & Digital Software Projects",
+  "F Güvenlik Protokolü": "F Security Protocol",
+  "KVKK & GDPR Kapsamlı Veri Bildirimi": "Comprehensive KVKK & GDPR Data Disclosure",
+  "F • Yazar & Geliştirici: Sertan Çubukcu. Bütün hakları saklıdır.": "F • Author & Developer: Sertan Çubukcu. All rights reserved.",
+  "F Türkçe ÖABT": "F Turkish ÖABT",
+  "F Türkçe ÖABT, AL": "F Turkish ÖABT, AL"
+};
+
+const ALEF_MONTH_MAP = {
+  "Oca": "Jan", "Şub": "Feb", "Mar": "Mar", "Nis": "Apr",
+  "May": "May", "Haz": "Jun", "Tem": "Jul", "Ağu": "Aug",
+  "Eyl": "Sep", "Eki": "Oct", "Kas": "Nov", "Ara": "Dec"
+};
+
+const ALEF_ATTR_MAP = {
+  "Balinayı Zıplat": "Jump the Whale",
+  "Mitolojik Balinayı Çağır": "Summon the Mythic Whale",
+  "ALΣF Ana Sayfa": "ALΣF Home Page",
+  "Dil Seçimi": "Language Selection",
+  "Büyütmek için tıklayın": "Click to enlarge",
+  "Önceki": "Previous",
+  "Sonraki": "Next",
+  "Görsel Büyütücü": "Image Lightbox",
+  "Kapat": "Close",
+  "Genişletilmiş Görüntü": "Enlarged Image"
+};
+
+function translateSingleString(norm) {
+  if (!norm) return null;
+  if (Object.prototype.hasOwnProperty.call(ALEF_I18N_MAP, norm)) {
+    return ALEF_I18N_MAP[norm];
+  }
+  const mDate = norm.match(/^(Oca|Şub|Mar|Nis|May|Haz|Tem|Ağu|Eyl|Eki|Kas|Ara)\s+(\d{4})\s+tarihinde verildi$/);
+  if (mDate) {
+    return `Issued ${ALEF_MONTH_MAP[mDate[1]]} ${mDate[2]}`;
+  }
+  if (norm.startsWith("Yeterlilik Kimliği ")) {
+    let rest = norm.slice("Yeterlilik Kimliği ".length);
+    if (rest === "Motivasyon 3.0 Eğitimi") rest = "Motivation 3.0 Training";
+    return `Credential ID ${rest}`;
+  }
+  const mRate = norm.match(/^★\s*(\d+),(\d+)\s*•\s*Ücretsiz$/);
+  if (mRate) {
+    return `★ ${mRate[1]}.${mRate[2]} • Free`;
+  }
+  return null;
+}
+
+let i18nInitialized = false;
+let trackedTextNodes = [];
+let trackedHtmlBlocks = [];
+let trackedAttrs = [];
+let origDocTitle = "";
+
+function prepareI18nCatalog() {
+  if (i18nInitialized) return;
+  i18nInitialized = true;
+  origDocTitle = document.title;
+
+  // 1. Special mixed-HTML paragraphs where English word order differs
+  document.querySelectorAll('.hero-subtitle, #internet-projeleri .store-banner p.text-justify').forEach(el => {
+    const orig = el.innerHTML;
+    let enHtml = null;
+    if (orig.includes('Millî Eğitim Bakanlığı Akademi Giriş Sınavı')) {
+      enHtml = 'A complete educational ecosystem meticulously developed for Republic of Türkiye Ministry of National Education Academy Entrance Exam (M<span class="sigma">Σ</span>B - AGS) and Turkish Teaching (ÖABT) candidates — featuring a comprehensive question pool, practice exams, topic summaries, the <strong>EğitimYayın Store</strong>, <strong>Google Play Books</strong>, the <strong>Dictionary of Turkic Myths</strong> digital culture portal, live web platforms, 8 interactive Telegram educational bots, and next-generation Android applications.';
+    } else if (orig.includes('BÜTÜN mobil uygulamalar')) {
+      enHtml = 'This Privacy Policy and Security Protocol is the complete and official security statement for <strong>ALL mobile applications</strong> developed and published by developer and author Sertan Çubukcu (AL<span class="sigma">Σ</span>F - M<span class="sigma">Σ</span>B - AGS, AL<span class="sigma">Σ</span>F Turkish ÖABT, AL<span class="sigma">Σ</span>F KPSS, AL<span class="sigma">Σ</span>F EKYS, Islamic Time: Shoulder to Shoulder, Qibla Finder, Karargâh, Mergen, Pırtıl, Asayiş Berko, and all future releases), the EğitimYayın Store, Google Play Books, online web services, and the Telegram educational bots ecosystem.';
+    } else if (orig.includes('Üç Boyutlu Sayfa Kıvrılma')) {
+      enHtml = 'A comprehensive culture portal uniting the 907-page original Annotated Encyclopedic Mythology Dictionary with <strong>3D Page-Curl Flipbook</strong> reading and realistic page-flip audio, Turkish text-to-speech (TTS), 7 reading themes, instant search across 874 mythological concepts and an etymology index, plus an interactive 3,868-question four-option trivia quiz under one roof.';
+    }
+    if (enHtml) {
+      trackedHtmlBlocks.push({ el, tr: orig, en: enHtml });
+      el.setAttribute('data-i18n-html-handled', 'true');
+    }
+  });
+
+  // 2. Walk all text nodes outside .content-tr / .content-en / handled HTML blocks
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+  let node;
+  while ((node = walker.nextNode())) {
+    const parent = node.parentElement;
+    if (!parent) continue;
+    const tag = parent.tagName;
+    if (tag === 'SCRIPT' || tag === 'STYLE') continue;
+    if (parent.closest('.content-tr, .content-en, [data-i18n-html-handled="true"]')) continue;
+
+    const raw = node.nodeValue;
+    const norm = raw.trim().replace(/\s+/g, ' ');
+    if (!norm) continue;
+
+    const enVal = translateSingleString(norm);
+    if (enVal) {
+      const leadMatch = raw.match(/^\s*/);
+      const trailMatch = raw.match(/\s*$/);
+      const lead = leadMatch ? leadMatch[0] : '';
+      const trail = trailMatch ? trailMatch[0] : '';
+      trackedTextNodes.push({
+        node,
+        tr: raw,
+        en: lead + enVal + trail
+      });
+    }
+  }
+
+  // 3. Track attributes (title, aria-label, alt)
+  document.querySelectorAll('[title], [aria-label], [alt]').forEach(el => {
+    ['title', 'aria-label', 'alt'].forEach(attr => {
+      const val = el.getAttribute(attr);
+      if (val && Object.prototype.hasOwnProperty.call(ALEF_ATTR_MAP, val)) {
+        trackedAttrs.push({ el, attr, tr: val, en: ALEF_ATTR_MAP[val] });
+      }
+    });
+  });
+}
+
 function initLanguage() {
+  prepareI18nCatalog();
   const langButtons = document.querySelectorAll('.lang-btn');
   const dualContainers = document.querySelectorAll('.dual-lang-container');
 
   function setLanguage(lang) {
-    if (!['tr', 'en', 'both'].includes(lang)) lang = 'tr';
+    if (lang !== 'en') lang = 'tr';
     document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.lang = lang === 'en' ? 'en' : 'tr';
+    document.documentElement.lang = lang;
 
     langButtons.forEach(btn => {
       const isActive = btn.dataset.lang === lang;
@@ -32,17 +459,37 @@ function initLanguage() {
       btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     });
 
+    // Toggle dual-language privacy articles if present
     document.querySelectorAll('.content-tr').forEach(el => {
       el.hidden = (lang === 'en');
     });
     document.querySelectorAll('.content-en').forEach(el => {
       el.hidden = (lang === 'tr');
     });
-
-    const wide = window.matchMedia('(min-width: 900px)').matches;
     dualContainers.forEach(c => {
-      c.style.gridTemplateColumns = (lang === 'both' && wide) ? '1fr 1fr' : '1fr';
+      c.style.gridTemplateColumns = '1fr';
     });
+
+    // Translate all tracked HTML blocks, text nodes, and attributes across the whole page
+    trackedHtmlBlocks.forEach(item => {
+      item.el.innerHTML = (lang === 'en') ? item.en : item.tr;
+    });
+    trackedTextNodes.forEach(item => {
+      item.node.nodeValue = (lang === 'en') ? item.en : item.tr;
+    });
+    trackedAttrs.forEach(item => {
+      item.el.setAttribute(item.attr, (lang === 'en') ? item.en : item.tr);
+    });
+
+    if (lang === 'en') {
+      if (origDocTitle.includes('Gizlilik Politikası')) {
+        document.title = 'ALΣF | Privacy Policy and Security Protocol (GDPR & KVKK)';
+      } else {
+        document.title = 'ALΣF (ALEF) | Education, Publishing & Digital Projects Portal';
+      }
+    } else {
+      document.title = origDocTitle;
+    }
 
     try { localStorage.setItem('alef_site_lang', lang); } catch (e) {}
   }
@@ -55,12 +502,11 @@ function initLanguage() {
   });
 
   let savedLang = 'tr';
-  try { savedLang = localStorage.getItem('alef_site_lang') || 'tr'; } catch (e) {}
+  try {
+    const stored = localStorage.getItem('alef_site_lang');
+    if (stored === 'en') savedLang = 'en';
+  } catch (e) {}
   setLanguage(savedLang);
-
-  window.addEventListener('resize', () => {
-    setLanguage(document.documentElement.getAttribute('data-lang') || 'tr');
-  });
 }
 
 
@@ -172,23 +618,13 @@ function initCopyActions() {
   document.querySelectorAll('[data-copy-email]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      copyText('sertancubukcu@gmail.com', 'E-posta adresi kopyalandı: sertancubukcu@gmail.com');
+      const isEn = document.documentElement.getAttribute('data-lang') === 'en';
+      copyText(
+        'sertancubukcu@gmail.com',
+        isEn ? 'Email address copied: sertancubukcu@gmail.com' : 'E-posta adresi kopyalandı: sertancubukcu@gmail.com'
+      );
     });
   });
-
-  const copyPolicyBtn = document.getElementById('copyPolicyBtn');
-  if (copyPolicyBtn) {
-    copyPolicyBtn.addEventListener('click', () => {
-      const lang = document.documentElement.getAttribute('data-lang') || 'tr';
-      const tr = document.querySelector('.policy-full-tr');
-      const en = document.querySelector('.policy-full-en');
-      let text = '';
-      if (lang === 'en') text = en ? en.innerText : '';
-      else if (lang === 'both') text = (tr ? tr.innerText : '') + '\n\n' + (en ? en.innerText : '');
-      else text = tr ? tr.innerText : '';
-      if (text.trim()) copyText(text.trim(), 'Gizlilik politikası metni kopyalandı.');
-    });
-  }
 }
 
 
@@ -209,109 +645,12 @@ document.addEventListener('click', initAudio, { once: true });
 document.addEventListener('touchstart', initAudio, { once: true });
 
 function playWhaleSong() {
-  try {
-    initAudio();
-    if (!audioCtx) return;
-    const now = audioCtx.currentTime;
-    const osc1 = audioCtx.createOscillator();
-    const osc2 = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    const filter = audioCtx.createBiquadFilter();
-
-    osc1.type = 'sine';
-    osc2.type = 'triangle';
-    filter.type = 'bandpass';
-    filter.Q.setValueAtTime(4.8, now);
-    filter.frequency.setValueAtTime(130, now);
-    filter.frequency.exponentialRampToValueAtTime(330, now + 1.2);
-    filter.frequency.exponentialRampToValueAtTime(150, now + 2.5);
-
-    osc1.frequency.setValueAtTime(90, now);
-    osc1.frequency.exponentialRampToValueAtTime(320, now + 1.1);
-    osc1.frequency.exponentialRampToValueAtTime(175, now + 2.0);
-    osc1.frequency.exponentialRampToValueAtTime(280, now + 2.8);
-    osc1.frequency.exponentialRampToValueAtTime(105, now + 4.0);
-
-    osc2.frequency.setValueAtTime(45, now);
-    osc2.frequency.exponentialRampToValueAtTime(160, now + 1.1);
-    osc2.frequency.exponentialRampToValueAtTime(50, now + 4.0);
-
-    gain.gain.setValueAtTime(0.001, now);
-    gain.gain.linearRampToValueAtTime(0.38, now + 0.6);
-    gain.gain.setValueAtTime(0.38, now + 2.6);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 4.2);
-
-    osc1.connect(filter);
-    osc2.connect(filter);
-    filter.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc1.start(now);
-    osc2.start(now);
-    osc1.stop(now + 4.2);
-    osc2.stop(now + 4.2);
-  } catch (e) {
-    console.warn('Balina sesi üretilemedi:', e);
-  }
+  // Balina zıplama sesi kullanıcı talebiyle kaldırıldı.
 }
 
-function playWaterCrash(intensity = 1.0) {
-  try {
-    initAudio();
-    if (!audioCtx) return;
-    const now = audioCtx.currentTime;
-    const bufferSize = audioCtx.sampleRate * 2.2;
-    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-
-    let b0 = 0, b1 = 0, b2 = 0;
-    for (let i = 0; i < bufferSize; i++) {
-      const white = Math.random() * 2 - 1;
-      b0 = 0.99886 * b0 + white * 0.0555179;
-      b1 = 0.99332 * b1 + white * 0.0750759;
-      b2 = 0.96900 * b2 + white * 0.1538520;
-      output[i] = (b0 + b1 + b2 + white * 0.5362) * 0.38;
-    }
-
-    const whiteNoise = audioCtx.createBufferSource();
-    whiteNoise.buffer = noiseBuffer;
-
-    const filter = audioCtx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.Q.setValueAtTime(5.5, now);
-    filter.frequency.setValueAtTime(1500, now);
-    filter.frequency.exponentialRampToValueAtTime(110, now + 1.7);
-
-    const gain = audioCtx.createGain();
-    gain.gain.setValueAtTime(0.001, now);
-    gain.gain.linearRampToValueAtTime(0.85 * intensity, now + 0.06);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
-
-    const subOsc = audioCtx.createOscillator();
-    const subGain = audioCtx.createGain();
-    subOsc.type = 'sine';
-    subOsc.frequency.setValueAtTime(70, now);
-    subOsc.frequency.exponentialRampToValueAtTime(28, now + 0.7);
-
-    subGain.gain.setValueAtTime(0.95 * intensity, now);
-    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
-
-    subOsc.connect(subGain);
-    subGain.connect(audioCtx.destination);
-
-    whiteNoise.connect(filter);
-    filter.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    subOsc.start(now);
-    whiteNoise.start(now);
-    subOsc.stop(now + 0.85);
-    whiteNoise.stop(now + 2.2);
-  } catch (e) {
-    console.warn('Su sesi üretilemedi:', e);
-  }
+function playWaterCrash() {
+  // Balina suya çarpma sesi kullanıcı talebiyle kaldırıldı.
 }
-
 
 // ==========================================
 
@@ -1618,12 +1957,12 @@ function downloadHalTercumesiBelgesi() {
 </head>
 <body>
   <div class="doc-toolbar">
-    <div class="doc-toolbar-title">Sertan Çubukcu — Hâl Tercümesi Belgesi</div>
-    <button onclick="window.print()">🖨️ Belgeyi Kaydet / Yazdır</button>
+    <div class="doc-toolbar-title">${document.documentElement.getAttribute('data-lang') === 'en' ? 'Sertan Çubukcu — Curriculum Vitae Document' : 'Sertan Çubukcu — Hâl Tercümesi Belgesi'}</div>
+    <button onclick="window.print()">${document.documentElement.getAttribute('data-lang') === 'en' ? '🖨️ Save / Print Document' : '🖨️ Belgeyi Kaydet / Yazdır'}</button>
   </div>
   <div class="doc-sheet">
     <div class="doc-official-header">
-      <h1>HÂL TERCÜMESİ BELGESİ</h1>
+      <h1>${document.documentElement.getAttribute('data-lang') === 'en' ? 'CURRICULUM VITAE' : 'HÂL TERCÜMESİ BELGESİ'}</h1>
       <div class="doc-sub">Sertan Çubukcu</div>
     </div>
     ${clone.innerHTML}
@@ -1656,13 +1995,11 @@ function startAllEngines() {
   window.triggerRealWaterSplash = triggerRealWaterSplash;
   window.triggerLightning = triggerLightning;
 
-  // Balinayı Çağır Butonu
+  // Balinayı Çağır Butonu (Sessiz Zıplama)
   const summonBtn = document.getElementById('summonWhaleBtn');
   if (summonBtn) {
     summonBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      initAudio();
-      triggerLightning();
       if (whaleEngineInstance) {
         whaleEngineInstance.triggerBreach();
       }
