@@ -1401,9 +1401,110 @@ function renderScreenMist() {
 // ==========================================
 let whaleEngineInstance = null;
 
+function downloadHalTercumesiBelgesi() {
+  const section = document.getElementById('hal-tercumesi');
+  if (!section) return;
+  const clone = section.cloneNode(true);
+  const headBtns = clone.querySelector('.section-head');
+  if (headBtns) headBtns.remove();
+
+  const printWin = window.open('', '_blank', 'width=960,height=840');
+  if (!printWin) {
+    window.print();
+    return;
+  }
+  const htmlDoc = `<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sertan Çubukcu - Hâl Tercümesi Belgesi</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      color: #111827;
+      background: #ffffff;
+      margin: 0;
+      padding: 28px 36px;
+      line-height: 1.55;
+    }
+    .doc-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+    .doc-toolbar button {
+      background: #f59e0b;
+      color: #111827;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .cv-hero-card, .cv-card {
+      background: #ffffff !important;
+      border: 1px solid #d1d5db !important;
+      border-radius: 10px !important;
+      padding: 16px 20px !important;
+      margin-bottom: 16px !important;
+      page-break-inside: avoid;
+    }
+    h3, .cv-role, strong { color: #0f172a !important; }
+    p, .cv-org, span, div { color: #1f2937 !important; }
+    a { color: #0369a1 !important; text-decoration: underline; }
+    .cv-date-badge, .badge {
+      background: #e0f2fe !important;
+      color: #0369a1 !important;
+      border: 1px solid #bae6fd !important;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+    .cv-badge-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cv-badge-item {
+      border: 1px solid #cbd5e1 !important;
+      background: #f8fafc !important;
+      color: #0f172a !important;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .cv-card-icon { display: none !important; }
+    @media print {
+      .doc-toolbar { display: none !important; }
+      body { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="doc-toolbar">
+    <div><strong>Sertan Çubukcu — Resmî Hâl Tercümesi Belgesi (LinkedIn Birebir Kayıt)</strong></div>
+    <button onclick="window.print()">🖨️ PDF Olarak Kaydet / Yazdır</button>
+  </div>
+  ${clone.innerHTML}
+  <script>setTimeout(function(){ window.print(); }, 450);<\/script>
+</body>
+</html>`;
+  printWin.document.open();
+  printWin.document.write(htmlDoc);
+  printWin.document.close();
+}
+
 function startAllEngines() {
   initLanguage();
   initScreenshotsAndLightbox();
+  initCopyActions();
+  window.downloadHalTercumesiBelgesi = downloadHalTercumesiBelgesi;
   initMythicBgCanvas();
   initSplashCanvas();
   renderScreenMist();
