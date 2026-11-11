@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>3D Whale Test</title>
+  <style>
+    body { margin: 0; background: #070e17; overflow: hidden; width: 100vw; height: 100vh; }
+    canvas { width: 100%; height: 100%; display: block; }
+  </style>
+</head>
+<body>
+  <div id="container" style="width: 1280px; height: 720px; position: relative;">
+    <canvas id="whaleCanvas"></canvas>
+  </div>
+
+  <script src="../assets/three.min.js"></script>
+  <script>
+    const width = 1280;
+    const height = 720;
+    const canvas = document.getElementById('whaleCanvas');
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.set(0, 5, 32);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(1);
+
+    // Light
+    const sunLight = new THREE.DirectionalLight(0xfff5e6, 2.2);
+    sunLight.position.set(12, 20, 15);
+    scene.add(sunLight);
+
+    const rimLight = new THREE.DirectionalLight(0x00f2fe, 1.8);
+    rimLight.position.set(-15, -10, -10);
+    scene.add(rimLight);
+
+    const ambientLight = new THREE.AmbientLight(0x1a365d, 1.2);
+    scene.add(ambientLight);
+
+    // BUILD 3D WHALE
+    const whaleGroup = new THREE.Group();
+
+    // 1. Body
+    const numRings = 28;
+    const numSegs = 24;
+    const positions = [];
+    const normals = [];
+    const colors = [];
+    const indices = [];
+
+    function getStation(u) {
+      let w, h, yOff;
+      if (u < 0.2) {
+        const t = u / 0.2;
+        w = 0.5 + t * 2.5;
+        h = 0.4 + t * 1.4;
+        yOff = 0.1 * t;
+      } else if (u < 0.45) {
+        const t = (u - 0.2) / 0.25;
+        w = 3.0 + (1 - (t - 0.5) * (t - 0.5) * 4) * 0.8;
+        h = 1.8 + t * 1.3;
+        yOff = -0.3 * t;
+      } else if (u < 0.8) {
+        const t = (u - 0.45) / 0.35;
+        w = 3.4 * (1 - t * 0.65);
+        h = 3.1 * (1 - t * 0.68);
+        yOff = -0.3 * (1 - t);
+      } else {
+        const t = (u - 0.8) / 0.2;
+        w = 1.2 * (1 - t * 0.65);
+        h = 1.0 * (1 - t * 0.68);
+        yOff = 0.1 * t;
+      }
+      const z = 11 - u * 23;
+      return { w, h, yOff, z };
+    }
+
+    for (let r = 0; r <= numRings; r++) {
+      const u = r / numRings;
+      const st = getStation(u);
+
+      for (let s = 0; s <= numSegs; s++) {
+        const theta = (s / numSegs) * Math.PI * 2;
+        let x = st.w * Math.sin(theta);
+        let y = st.yOff + st.h * Math.cos(theta);
+        const z = st.z;
+
+        // Underside belly pleats
+        const isBelly = (Math.cos(theta) < -0.15) && (u > 0.08 && u < 0.6);
+        if (isBelly) {
+          y += Math.cos(theta * 28) * 0.06;
+        }
+
+        // Rostrum tubercles (bumps)
+        if (u < 0.25 && Math.cos(theta) > 0.3) {
+          y += Math.sin(u * 40) * Math.cos(theta * 10) * 0.07;
+        }
+
+        positions.push(x, y, z);
+
+        // Vertex Color
+        if (Math.cos(theta) < -0.15) {
+          // Luminous pearl white belly
+          colors.push(0.92, 0.95, 0.98);
+        } else {
+          // Deep slate navy back
+          colors.push(0.08, 0.13, 0.20);
+        }
+      }
+    }
+
+    for (let r = 0; r < numRings; r++) {
+      for (let s = 0; s < numSegs; s++) {
+        const i1 = r * (numSegs + 1) + s;
+        const i2 = (r + 1) * (numSegs + 1) + s;
+        const i3 = (r + 1) * (numSegs + 1) + (s + 1);
+        const i4 = r * (numSegs + 1) + (s + 1);
+        indices.push(i1, i2, i4);
+        indices.push(i2, i3, i4);
+      }
+    }
+
+    const bodyGeo = new THREE.BufferGeometry();
+    bodyGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    bodyGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    bodyGeo.setIndex(indices);
+    bodyGeo.computeVertexNormals();
+
+    const bodyMat = new THREE.MeshStandardMaterial({
+      vertexColors: true,
+      roughness: 0.18,
+      metalness: 0.15,
+      side: THREE.DoubleSide
+    });
+    const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+    whaleGroup.add(bodyMesh);
+
+    // 2. Giant Pectoral Flippers
+    function createFlipper(isLeft) {
+      const flipperShape = new THREE.Shape();
+      flipperShape.moveTo(0, 0);
+      flipperShape.bezierCurveTo(2.5, 0.4, 7.0, -1.2, 9.5, -3.8); // leading edge with curvature
+      flipperShape.bezierCurveTo(8.5, -4.2, 5.0, -3.2, 3.0, -2.2); // tip and trailing edge
+      flipperShape.bezierCurveTo(1.5, -1.5, 0.5, -0.8, 0, 0);
+
+      const extrudeSettings = { depth: 0.25, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.1, bevelThickness: 0.1 };
+      const flipperGeo = new THREE.ExtrudeGeometry(flipperShape, extrudeSettings);
+      flipperGeo.computeVertexNormals();
+
+      const flipperMat = new THREE.MeshStandardMaterial({
+        color: isLeft ? 0x111c29 : 0x132030,
+        roughness: 0.2,
+        metalness: 0.12
+      });
+
+      const mesh = new THREE.Mesh(flipperGeo, flipperMat);
+      const group = new THREE.Group();
+      group.add(mesh);
+
+      group.position.set(isLeft ? 3.2 : -3.2, -0.8, 3.2);
+      if (isLeft) {
+        group.rotation.set(0.2, 0.4, -0.55);
+      } else {
+        mesh.scale.set(-1, 1, 1);
+        group.rotation.set(0.2, -0.4, 0.55);
+      }
+      return group;
+    }
+
+    const leftFlipper = createFlipper(true);
+    const rightFlipper = createFlipper(false);
+    whaleGroup.add(leftFlipper);
+    whaleGroup.add(rightFlipper);
+
+    // 3. Wide Caudal Flukes (Tail Fin)
+    const flukeShape = new THREE.Shape();
+    flukeShape.moveTo(0, 0);
+    // Right wing
+    flukeShape.bezierCurveTo(2.5, 0.3, 5.2, 0.8, 6.8, 1.8); // leading edge
+    flukeShape.bezierCurveTo(6.4, 0.8, 4.5, -0.6, 2.2, -1.2); // tip to trailing
+    flukeShape.bezierCurveTo(0.8, -1.4, 0.2, -0.8, 0, -0.3); // central notch
+    // Left wing
+    flukeShape.bezierCurveTo(-0.2, -0.8, -0.8, -1.4, -2.2, -1.2);
+    flukeShape.bezierCurveTo(-4.5, -0.6, -6.4, 0.8, -6.8, 1.8);
+    flukeShape.bezierCurveTo(-5.2, 0.8, -2.5, 0.3, 0, 0);
+
+    const flukeGeo = new THREE.ExtrudeGeometry(flukeShape, { depth: 0.18, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.08, bevelThickness: 0.08 });
+    flukeGeo.computeVertexNormals();
+    const flukeMat = new THREE.MeshStandardMaterial({ color: 0x0f1822, roughness: 0.2, metalness: 0.12 });
+    const flukeMesh = new THREE.Mesh(flukeGeo, flukeMat);
+
+    const tailGroup = new THREE.Group();
+    tailGroup.position.set(0, 0.1, -12);
+    flukeMesh.rotation.x = Math.PI / 2;
+    tailGroup.add(flukeMesh);
+    whaleGroup.add(tailGroup);
+
+    // 4. Dorsal Fin
+    const dorsalShape = new THREE.Shape();
+    dorsalShape.moveTo(0, 0);
+    dorsalShape.bezierCurveTo(0.2, 0.8, 0.6, 1.3, 0.4, 1.5);
+    dorsalShape.bezierCurveTo(0.1, 1.2, -0.5, 0.4, -1.4, 0);
+    dorsalShape.closePath();
+    const dorsalGeo = new THREE.ExtrudeGeometry(dorsalShape, { depth: 0.12, bevelEnabled: true, bevelSegments: 1, steps: 1, bevelSize: 0.04, bevelThickness: 0.04 });
+    const dorsalMesh = new THREE.Mesh(dorsalGeo, flukeMat);
+    dorsalMesh.position.set(0, 1.9, -5.5);
+    dorsalMesh.rotation.y = Math.PI / 2;
+    whaleGroup.add(dorsalMesh);
+
+    // Position whale mid-breach
+    whaleGroup.position.set(1, 2, -2);
+    whaleGroup.rotation.set(-0.45, 0.8, 0.65); // arched in the air, belly rolling toward camera
+    scene.add(whaleGroup);
+
+    renderer.render(scene, camera);
+    console.log('Whale rendered successfully!');
+  </script>
+</body>
+</html>

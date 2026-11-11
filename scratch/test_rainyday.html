@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>RainyDay Test</title>
+  <style>
+    body { margin: 0; background: #070e17; overflow: hidden; width: 1280px; height: 720px; }
+    #bgImg { width: 1280px; height: 720px; object-fit: cover; }
+    #rainContainer { position: fixed; inset: 0; width: 1280px; height: 720px; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <img id="bgImg" src="../assets/site_bg_nano.png" alt="Nano BG">
+  <div id="rainContainer"></div>
+
+  <script src="../assets/rainyday.min.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      try {
+        const img = document.getElementById('bgImg');
+        const engine = new RainyDay({
+          image: img,
+          parentElement: document.getElementById('rainContainer'),
+          blur: 10,
+          opacity: 1,
+          fps: 30
+        });
+
+        // Add 50 heavy splash drops
+        for (let i = 0; i < 50; i++) {
+          const x = 200 + Math.random() * 880;
+          const y = 100 + Math.random() * 500;
+          const r = 8 + Math.random() * 22;
+          engine.putDrop(new engine.Drop(engine, x, y, r));
+        }
+
+        console.log('RainyDay drops initialized successfully!');
+      } catch (e) {
+        console.error('RainyDay error:', e);
+      }
+    });
+  </script>
+</body>
+</html>

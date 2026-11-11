@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ocean Waves & Lightning Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #070e17; color: #fff; min-height: 250vh; overflow-x: hidden; font-family: sans-serif; }
+    #oceanCanvas { position: fixed; bottom: 0; left: 0; width: 100vw; height: 180px; z-index: 25; pointer-events: none; }
+    #lightningOverlay { position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: 0; background: #e0f2fe; mix-blend-mode: screen; transition: opacity 0.05s ease-out; }
+    .test-box { padding: 40px; margin: 40px auto; max-width: 800px; background: rgba(13, 27, 42, 0.8); border: 1px solid #00f2fe; border-radius: 12px; }
+    .btn { padding: 12px 24px; font-size: 16px; background: #00f2fe; color: #05101e; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; margin: 10px; }
+  </style>
+</head>
+<body>
+  <div id="lightningOverlay"></div>
+  <canvas id="oceanCanvas"></canvas>
+
+  <div class="test-box">
+    <h1>Okyanus Dalgaları & Şimşek Testi</h1>
+    <p>Aşağı kaydırdıkça okyanus dalgaları paralaks ile hareket eder. Butona basınca şimşek çakar ve gök gürler.</p>
+    <button id="thunderBtn" class="btn">⚡ Şimşek Çak & Gök Gürlet</button>
+  </div>
+
+  <script>
+    // 1. SES MOTORU: GÖK GÜRÜLTÜSÜ (WEB AUDIO API)
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioClass) audioCtx = new AudioClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    document.addEventListener('click', initAudio, { once: true });
+
+    function playThunderSound() {
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        // 1. Initial Sharp Crack
+        const crackBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.4, audioCtx.sampleRate);
+        const crackData = crackBuffer.getChannelData(0);
+        for (let i = 0; i < crackData.length; i++) {
+          crackData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.08));
+        }
+        const crackSource = audioCtx.createBufferSource();
+        crackSource.buffer = crackBuffer;
+
+        const crackFilter = audioCtx.createBiquadFilter();
+        crackFilter.type = 'bandpass';
+        crackFilter.frequency.setValueAtTime(600, now);
+        crackFilter.frequency.exponentialRampToValueAtTime(180, now + 0.35);
+        crackFilter.Q.setValueAtTime(3.5, now);
+
+        const crackGain = audioCtx.createGain();
+        crackGain.gain.setValueAtTime(0.75, now);
+        crackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+        crackSource.connect(crackFilter);
+        crackFilter.connect(crackGain);
+        crackGain.connect(audioCtx.destination);
+        crackSource.start(now);
+
+        // 2. Deep Rolling Thunder Rumble (3.5 saniye)
+        const rumbleLen = audioCtx.sampleRate * 3.5;
+        const rumbleBuffer = audioCtx.createBuffer(1, rumbleLen, audioCtx.sampleRate);
+        const rumbleData = rumbleBuffer.getChannelData(0);
+        let last = 0;
+        for (let i = 0; i < rumbleLen; i++) {
+          const white = Math.random() * 2 - 1;
+          last = (last + (0.02 * white)) / 1.02; // Brownian noise
+          rumbleData[i] = last * 3.5;
+        }
+        const rumbleSource = audioCtx.createBufferSource();
+        rumbleSource.buffer = rumbleBuffer;
+
+        const rumbleFilter = audioCtx.createBiquadFilter();
+        rumbleFilter.type = 'lowpass';
+        rumbleFilter.frequency.setValueAtTime(140, now);
+        rumbleFilter.frequency.linearRampToValueAtTime(85, now + 2.0);
+        rumbleFilter.frequency.linearRampToValueAtTime(45, now + 3.5);
+
+        const rumbleGain = audioCtx.createGain();
+        rumbleGain.gain.setValueAtTime(0.001, now);
+        rumbleGain.gain.linearRampToValueAtTime(0.9, now + 0.15);
+        rumbleGain.gain.exponentialRampToValueAtTime(0.3, now + 1.8);
+        rumbleGain.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
+
+        // Sub-bass resonance
+        const subOsc = audioCtx.createOscillator();
+        const subGain = audioCtx.createGain();
+        subOsc.type = 'triangle';
+        subOsc.frequency.setValueAtTime(48, now);
+        subOsc.frequency.exponentialRampToValueAtTime(24, now + 2.5);
+        subGain.gain.setValueAtTime(0.4, now);
+        subGain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+
+        subOsc.connect(subGain);
+        subGain.connect(audioCtx.destination);
+        subOsc.start(now);
+        subOsc.stop(now + 2.5);
+
+        rumbleSource.connect(rumbleFilter);
+        rumbleFilter.connect(rumbleGain);
+        rumbleGain.connect(audioCtx.destination);
+        rumbleSource.start(now);
+        rumbleSource.stop(now + 3.5);
+      } catch (e) {
+        console.warn('Gök gürültüsü üretilemedi:', e);
+      }
+    }
+
+    // 2. ŞİMŞEK ÇAKMASI (Çok Aşamalı Strobe Flash)
+    function triggerLightning() {
+      const overlay = document.getElementById('lightningOverlay');
+      if (!overlay) return;
+
+      // Aşama 1: Ön Çakma (60ms)
+      overlay.style.opacity = '0.55';
+      setTimeout(() => {
+        overlay.style.opacity = '0.1';
+        // Aşama 2: Ana Güçlü Yıldırım (110ms)
+        setTimeout(() => {
+          overlay.style.opacity = '0.95';
+          playThunderSound(); // Ses gelir!
+          setTimeout(() => {
+            overlay.style.opacity = '0.35';
+            // Aşama 3: Sönüm
+            setTimeout(() => {
+              overlay.style.opacity = '0';
+            }, 180);
+          }, 90);
+        }, 50);
+      }, 60);
+    }
+
+    document.getElementById('thunderBtn').addEventListener('click', () => {
+      initAudio();
+      triggerLightning();
+    });
+
+    // 3. DALGALI OKYANUS TUVALİ (PARALAKS DESTEKLİ)
+    const ocean = document.getElementById('oceanCanvas');
+    const ctx = ocean.getContext('2d');
+    let oWidth = 0, oHeight = 0;
+
+    function resizeOcean() {
+      oWidth = ocean.width = window.innerWidth;
+      oHeight = ocean.height = 180;
+    }
+    resizeOcean();
+    window.addEventListener('resize', resizeOcean);
+
+    let scrollOffset = 0;
+    window.addEventListener('scroll', () => {
+      scrollOffset = window.scrollY * 0.12;
+    });
+
+    let waveTime = 0;
+    function renderWaves() {
+      waveTime += 0.02;
+      ctx.clearRect(0, 0, oWidth, oHeight);
+
+      // Dalga 1: Derin Okyanus (Arka katman)
+      ctx.beginPath();
+      ctx.moveTo(0, oHeight);
+      for (let x = 0; x <= oWidth; x += 10) {
+        const y = 80 + Math.sin(x * 0.008 + waveTime * 0.8) * 18 + Math.cos(x * 0.004 + waveTime * 0.5) * 12 + Math.sin(scrollOffset * 0.05) * 6;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(oWidth, oHeight);
+      ctx.closePath();
+      const grad1 = ctx.createLinearGradient(0, 50, 0, oHeight);
+      grad1.addColorStop(0, 'rgba(3, 105, 161, 0.55)');
+      grad1.addColorStop(1, 'rgba(7, 24, 48, 0.95)');
+      ctx.fillStyle = grad1;
+      ctx.fill();
+
+      // Dalga 2: Orta Okyanus Akıntısı
+      ctx.beginPath();
+      ctx.moveTo(0, oHeight);
+      for (let x = 0; x <= oWidth; x += 10) {
+        const y = 100 + Math.sin(x * 0.012 - waveTime * 1.1) * 14 + Math.sin(x * 0.02 + waveTime * 1.5) * 8;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(oWidth, oHeight);
+      ctx.closePath();
+      const grad2 = ctx.createLinearGradient(0, 70, 0, oHeight);
+      grad2.addColorStop(0, 'rgba(0, 242, 254, 0.45)');
+      grad2.addColorStop(1, 'rgba(10, 37, 64, 0.95)');
+      ctx.fillStyle = grad2;
+      ctx.fill();
+
+      // Dalga 3: Ön Köpüklü Tepe Dalgası
+      ctx.beginPath();
+      ctx.moveTo(0, oHeight);
+      for (let x = 0; x <= oWidth; x += 8) {
+        const y = 115 + Math.sin(x * 0.015 + waveTime * 1.4) * 12 + Math.cos(x * 0.009 - waveTime * 0.9) * 10;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(oWidth, oHeight);
+      ctx.closePath();
+      const grad3 = ctx.createLinearGradient(0, 90, 0, oHeight);
+      grad3.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
+      grad3.addColorStop(1, 'rgba(5, 16, 30, 0.98)');
+      ctx.fillStyle = grad3;
+      ctx.fill();
+
+      // Köpük Çizgisi (Beyaz/Siyan Tepe Işıltısı)
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.beginPath();
+      for (let x = 0; x <= oWidth; x += 8) {
+        const y = 115 + Math.sin(x * 0.015 + waveTime * 1.4) * 12 + Math.cos(x * 0.009 - waveTime * 0.9) * 10;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      requestAnimationFrame(renderWaves);
+    }
+    renderWaves();
+  </script>
+</body>
+</html>

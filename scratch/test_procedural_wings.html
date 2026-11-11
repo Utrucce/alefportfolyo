@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { background: #070e17; margin: 0; display: flex; gap: 20px; padding: 30px; }
+    canvas { border: 1px solid #00f2fe; border-radius: 8px; }
+  </style>
+</head>
+<body>
+<script>
+  function createButterflyTexture(colorType, isLeft) {
+    const cvs = document.createElement('canvas');
+    cvs.width = 256;
+    cvs.height = 340;
+    const ctx = cvs.getContext('2d');
+
+    // Palette
+    const palettes = {
+      blue: { base: '#00d2ff', mid: '#0055ff', dark: '#001144', rim: '#ffffff', glow: '#00f2fe' },
+      emerald: { base: '#00f260', mid: '#0575e6', dark: '#022e1f', rim: '#ffffff', glow: '#05ffa1' },
+      gold: { base: '#ffd700', mid: '#ff8800', dark: '#4a2600', rim: '#ffffff', glow: '#ffb700' },
+      purple: { base: '#f72585', mid: '#7209b7', dark: '#240046', rim: '#ffffff', glow: '#b5179e' }
+    };
+    const pal = palettes[colorType] || palettes.blue;
+
+    // Wing Shape Path
+    ctx.save();
+    if (!isLeft) {
+      ctx.translate(256, 0);
+      ctx.scale(-1, 1);
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(20, 160); // base at body
+    ctx.bezierCurveTo(40, 80, 120, 20, 220, 25); // forewing top apex
+    ctx.bezierCurveTo(250, 45, 250, 110, 210, 150); // forewing outer margin
+    ctx.bezierCurveTo(240, 190, 230, 270, 170, 310); // hindwing lobe
+    ctx.bezierCurveTo(120, 335, 70, 310, 50, 260); // hindwing inner margin
+    ctx.bezierCurveTo(30, 220, 20, 180, 20, 160);
+    ctx.closePath();
+
+    // Iridescent gradient
+    const grad = ctx.createRadialGradient(80, 140, 10, 140, 160, 220);
+    grad.addColorStop(0, pal.base);
+    grad.addColorStop(0.45, pal.mid);
+    grad.addColorStop(0.85, pal.dark);
+    grad.addColorStop(1, '#050a14');
+
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Chitinous Venation (Damarlar)
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(10, 15, 30, 0.75)';
+    const veins = [
+      [[20, 160], [100, 100], [210, 40]],
+      [[20, 160], [120, 115], [225, 80]],
+      [[20, 160], [130, 145], [215, 135]],
+      [[20, 160], [120, 190], [190, 230]],
+      [[20, 160], [90, 230], [150, 290]],
+      [[20, 160], [60, 240], [90, 300]]
+    ];
+    veins.forEach(v => {
+      ctx.beginPath();
+      ctx.moveTo(v[0][0], v[0][1]);
+      ctx.quadraticCurveTo(v[1][0], v[1][1], v[2][0], v[2][1]);
+      ctx.stroke();
+    });
+
+    // Dark margin with white luminescent dots
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = '#050a14';
+    ctx.stroke();
+
+    const dots = [
+      [220, 35], [235, 65], [230, 95], [215, 125],
+      [225, 180], [220, 220], [195, 265], [160, 298], [115, 320]
+    ];
+    dots.forEach(([x, y]) => {
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = pal.rim;
+      ctx.fill();
+    });
+
+    ctx.restore();
+    document.body.appendChild(cvs);
+    return cvs;
+  }
+
+  ['blue', 'emerald', 'gold', 'purple'].forEach(c => createButterflyTexture(c, true));
+</script>
+</body>
+</html>

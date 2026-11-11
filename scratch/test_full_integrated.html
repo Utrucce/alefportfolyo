@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Full 3D Whale & RainyDay & 3D Butterflies Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #070e17; color: #fff; font-family: sans-serif; overflow-x: hidden; min-height: 200vh; }
+    #bgContainer { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+    #bgContainer img { width: 100%; height: 100%; object-fit: cover; opacity: 0.35; }
+    #butterflyThreeCanvas { position: fixed; inset: 0; z-index: 10; pointer-events: none; width: 100vw; height: 100vh; }
+    #whaleThreeCanvas { position: fixed; inset: 0; z-index: 30; pointer-events: none; width: 100vw; height: 100vh; }
+    #rainyGlassContainer { position: fixed; inset: 0; z-index: 45; pointer-events: none; width: 100vw; height: 100vh; }
+    #screenSplashCanvas { position: fixed; inset: 0; z-index: 50; pointer-events: none; width: 100vw; height: 100vh; }
+    .content { position: relative; z-index: 20; padding: 80px 40px; max-width: 900px; margin: 0 auto; }
+    .card { background: rgba(13, 27, 42, 0.75); border: 1px solid rgba(0, 242, 254, 0.3); padding: 30px; border-radius: 16px; margin-bottom: 30px; }
+    .whale-btn { position: fixed; bottom: 30px; right: 30px; z-index: 100; padding: 14px 28px; background: linear-gradient(135deg, #00f2fe, #4facfe); border: none; border-radius: 50px; color: #05101e; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 8px 25px rgba(0, 242, 254, 0.5); }
+  </style>
+</head>
+<body>
+
+  <div id="bgContainer">
+    <img id="nanoBgRef" src="../assets/site_bg_nano.png" alt="Nano BG">
+  </div>
+
+  <canvas id="butterflyThreeCanvas"></canvas>
+  <canvas id="whaleThreeCanvas"></canvas>
+  <div id="rainyGlassContainer"></div>
+  <canvas id="screenSplashCanvas"></canvas>
+
+  <button id="summonWhaleBtn" class="whale-btn">🐋 3D Kambur Balinayı Sıçrat</button>
+
+  <div class="content">
+    <div class="card">
+      <h1>ALΣF 3B WebGL Deneyimi</h1>
+      <p>Gerçek Three.js 3B kambur balina, 3B kelebekler ve RainyDay.js optik cam ıslanması testi.</p>
+    </div>
+    <div class="card">
+      <h2>Mitolojik & Fantastik Doğa</h2>
+      <p>Balina zıpladığında devasa su fışkıracak, ekran sırılsıklam ıslanacak ve su damlaları camdan aşağı süzülecektir.</p>
+    </div>
+  </div>
+
+  <script src="../assets/three.min.js"></script>
+  <script src="../assets/rainyday.min.js"></script>
+  <script src="integrated_engine.js"></script>
+</body>
+</html>

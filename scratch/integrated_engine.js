@@ -1,0 +1,956 @@
+/**
+ * ALΣF Portal - 3D Whale, RainyDay Wet Glass & 3D Butterflies Engine
+ */
+
+// ========================================================
+// 1. SES MOTORU (WEB AUDIO API)
+// ========================================================
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) audioCtx = new AudioContextClass();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+document.addEventListener('click', initAudio, { once: true });
+document.addEventListener('touchstart', initAudio, { once: true });
+
+function playWhaleSong() {
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc1 = audioCtx.createOscillator();
+    const osc2 = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+
+    osc1.type = 'sine';
+    osc2.type = 'triangle';
+    filter.type = 'bandpass';
+    filter.Q.setValueAtTime(4.8, now);
+    filter.frequency.setValueAtTime(130, now);
+    filter.frequency.exponentialRampToValueAtTime(330, now + 1.2);
+    filter.frequency.exponentialRampToValueAtTime(150, now + 2.5);
+
+    osc1.frequency.setValueAtTime(90, now);
+    osc1.frequency.exponentialRampToValueAtTime(320, now + 1.1);
+    osc1.frequency.exponentialRampToValueAtTime(175, now + 2.0);
+    osc1.frequency.exponentialRampToValueAtTime(280, now + 2.8);
+    osc1.frequency.exponentialRampToValueAtTime(105, now + 4.0);
+
+    osc2.frequency.setValueAtTime(45, now);
+    osc2.frequency.exponentialRampToValueAtTime(160, now + 1.1);
+    osc2.frequency.exponentialRampToValueAtTime(50, now + 4.0);
+
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(0.38, now + 0.6);
+    gain.gain.setValueAtTime(0.38, now + 2.6);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 4.2);
+
+    osc1.connect(filter);
+    osc2.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 4.2);
+    osc2.stop(now + 4.2);
+  } catch (e) {
+    console.warn('Balina sesi üretilemedi:', e);
+  }
+}
+
+function playWaterCrash(intensity = 1.0) {
+  try {
+    initAudio();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const bufferSize = audioCtx.sampleRate * 2.2;
+    const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+
+    let b0 = 0, b1 = 0, b2 = 0;
+    for (let i = 0; i < bufferSize; i++) {
+      const white = Math.random() * 2 - 1;
+      b0 = 0.99886 * b0 + white * 0.0555179;
+      b1 = 0.99332 * b1 + white * 0.0750759;
+      b2 = 0.96900 * b2 + white * 0.1538520;
+      output[i] = (b0 + b1 + b2 + white * 0.5362) * 0.38;
+    }
+
+    const whiteNoise = audioCtx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.Q.setValueAtTime(5.5, now);
+    filter.frequency.setValueAtTime(1500, now);
+    filter.frequency.exponentialRampToValueAtTime(110, now + 1.7);
+
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(0.85 * intensity, now + 0.06);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
+
+    const subOsc = audioCtx.createOscillator();
+    const subGain = audioCtx.createGain();
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(70, now);
+    subOsc.frequency.exponentialRampToValueAtTime(28, now + 0.7);
+
+    subGain.gain.setValueAtTime(0.95 * intensity, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+
+    subOsc.connect(subGain);
+    subGain.connect(audioCtx.destination);
+
+    whiteNoise.connect(filter);
+    filter.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    subOsc.start(now);
+    whiteNoise.start(now);
+    subOsc.stop(now + 0.85);
+    whiteNoise.stop(now + 2.2);
+  } catch (e) {
+    console.warn('Su sesi üretilemedi:', e);
+  }
+}
+
+
+// ========================================================
+// 2. OPTİK CAM ISLANMASI & SU DAMLALARI (RAINYDAY.JS + LENS MIST)
+// ========================================================
+let rainyEngine = null;
+let isRainActive = false;
+let splashMistAlpha = 0;
+let splashCanvas = null;
+let splashCtx = null;
+
+function initSplashCanvas() {
+  splashCanvas = document.getElementById('screenSplashCanvas');
+  if (splashCanvas) {
+    splashCtx = splashCanvas.getContext('2d');
+    splashCanvas.width = window.innerWidth;
+    splashCanvas.height = window.innerHeight;
+  }
+}
+
+function resizeSplash() {
+  if (splashCanvas) {
+    splashCanvas.width = window.innerWidth;
+    splashCanvas.height = window.innerHeight;
+  }
+}
+window.addEventListener('resize', resizeSplash);
+
+function initRainyDay() {
+  const bgImg = document.getElementById('nanoBgRef');
+  const container = document.getElementById('rainyGlassContainer');
+  if (!bgImg || !container || typeof RainyDay === 'undefined') return;
+
+  function setup() {
+    try {
+      rainyEngine = new RainyDay({
+        image: bgImg,
+        parentElement: container,
+        blur: 10,
+        opacity: 0.95,
+        fps: 30
+      });
+      rainyEngine.trail = rainyEngine.TRAIL_DROPS;
+      rainyEngine.gravity = rainyEngine.GRAVITY_NON_LINEAR;
+      console.log('RainyDay.js optik su lensi hazır.');
+    } catch (e) {
+      console.warn('RainyDay başlatılamadı:', e);
+    }
+  }
+
+  if (bgImg.complete && bgImg.naturalWidth > 0) {
+    setup();
+  } else {
+    bgImg.addEventListener('load', setup);
+  }
+}
+
+let screenWaterDrops = [];
+
+function triggerRealWaterSplash() {
+  splashMistAlpha = 0.68; // Kamera lensi sislenmesi
+
+  // 1. Ani 65 Adet Fiziksel Sıvı Cam Damlası Patlaması
+  const count = 65;
+  const originX = window.innerWidth * 0.55;
+  const originY = window.innerHeight * 0.65;
+
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 4 + Math.random() * 25;
+    const r = 5 + Math.random() * 20; // 5px - 25px
+    const isHeavy = r > 11;
+
+    screenWaterDrops.push({
+      x: originX + Math.cos(angle) * (Math.random() * 380),
+      y: originY + Math.sin(angle) * (Math.random() * 260),
+      r: r,
+      origR: r,
+      vx: Math.cos(angle) * speed * 0.12,
+      vy: isHeavy ? (2.0 + Math.random() * 3.8) : (Math.random() * 0.4),
+      gravity: isHeavy ? 0.09 : 0.006,
+      trail: [],
+      alpha: 0.96,
+      life: 300 + Math.random() * 180
+    });
+  }
+
+  // 2. RainyDay.js Optik Arka Plan Kırılması
+  if (rainyEngine && !isRainActive) {
+    isRainActive = true;
+    try {
+      rainyEngine.rain([
+        [4, 9, 0.6],
+        [9, 18, 0.35],
+        [18, 30, 0.12]
+      ], 35);
+
+      setTimeout(() => {
+        if (rainyEngine) {
+          rainyEngine.presets = [];
+          isRainActive = false;
+        }
+      }, 7000);
+    } catch (e) {
+      console.warn('RainyDay su sıçratma hatası:', e);
+    }
+  }
+}
+
+// Ekran Su Sisi & Fiziksel Cam Damlaları Çizim Döngüsü
+function renderScreenMist() {
+  if (!splashCtx && splashCanvas) {
+    splashCtx = splashCanvas.getContext('2d');
+  }
+  if (splashCtx) {
+    splashCtx.clearRect(0, 0, splashCanvas.width, splashCanvas.height);
+
+    // A) Kamera Lensi Şeffaf Su Buğusu
+    if (splashMistAlpha > 0.01) {
+      const grad = splashCtx.createRadialGradient(
+        splashCanvas.width * 0.5, splashCanvas.height * 0.5, 50,
+        splashCanvas.width * 0.5, splashCanvas.height * 0.5, Math.max(splashCanvas.width, splashCanvas.height) * 0.75
+      );
+      grad.addColorStop(0, `rgba(225, 245, 255, ${splashMistAlpha * 0.45})`);
+      grad.addColorStop(0.7, `rgba(180, 220, 255, ${splashMistAlpha * 0.35})`);
+      grad.addColorStop(1, `rgba(120, 180, 230, ${splashMistAlpha * 0.15})`);
+
+      splashCtx.fillStyle = grad;
+      splashCtx.fillRect(0, 0, splashCanvas.width, splashCanvas.height);
+      splashMistAlpha *= 0.985;
+    }
+
+    // B) Fiziksel Cam Damlacıkları (Menisküs + Kırılma + Specular Glint + Akış)
+    for (let i = screenWaterDrops.length - 1; i >= 0; i--) {
+      const d = screenWaterDrops[i];
+      d.life--;
+
+      if (d.life < 50) {
+        d.alpha = (d.life / 50) * 0.96;
+        d.r = d.origR * (d.life / 50);
+      }
+
+      // Aşağı doğru süzülme fiziği
+      if (d.r > 9) {
+        d.vy += d.gravity;
+        d.y += d.vy;
+        d.x += (Math.random() - 0.5) * 0.35;
+        if (Math.random() > 0.45) {
+          d.trail.push({ x: d.x, y: d.y, r: d.r * 0.35, alpha: d.alpha * 0.6 });
+        }
+      }
+
+      // Islak akış izi
+      d.trail.forEach(t => {
+        t.alpha *= 0.98;
+        splashCtx.beginPath();
+        splashCtx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
+        splashCtx.fillStyle = `rgba(210, 240, 255, ${t.alpha * 0.28})`;
+        splashCtx.fill();
+      });
+
+      // Ana Sıvı Damla
+      splashCtx.save();
+      splashCtx.translate(d.x, d.y);
+
+      // 1. Menisküs & Gölge Halkası
+      splashCtx.beginPath();
+      splashCtx.arc(0, 0, d.r, 0, Math.PI * 2);
+      splashCtx.fillStyle = `rgba(10, 25, 45, ${d.alpha * 0.4})`;
+      splashCtx.fill();
+
+      // 2. İç Optik Su Lensi / Caustic
+      const innerGrad = splashCtx.createRadialGradient(-d.r * 0.3, -d.r * 0.3, 1, 0, 0, d.r);
+      innerGrad.addColorStop(0, `rgba(255, 255, 255, ${d.alpha * 0.95})`);
+      innerGrad.addColorStop(0.35, `rgba(205, 238, 255, ${d.alpha * 0.65})`);
+      innerGrad.addColorStop(0.75, `rgba(90, 175, 255, ${d.alpha * 0.22})`);
+      innerGrad.addColorStop(1, `rgba(255, 255, 255, ${d.alpha * 0.48})`);
+
+      splashCtx.beginPath();
+      splashCtx.arc(0, 0, d.r * 0.92, 0, Math.PI * 2);
+      splashCtx.fillStyle = innerGrad;
+      splashCtx.fill();
+
+      // 3. Keskin Beyaz Işık Yansıması (Specular Glint)
+      splashCtx.beginPath();
+      splashCtx.ellipse(-d.r * 0.32, -d.r * 0.32, d.r * 0.35, d.r * 0.2, -Math.PI / 4, 0, Math.PI * 2);
+      splashCtx.fillStyle = `rgba(255, 255, 255, ${d.alpha * 0.96})`;
+      splashCtx.fill();
+
+      splashCtx.restore();
+
+      if (d.life <= 0 || d.y > splashCanvas.height + 50) {
+        screenWaterDrops.splice(i, 1);
+      }
+    }
+  }
+  requestAnimationFrame(renderScreenMist);
+}
+renderScreenMist();
+
+
+// ========================================================
+// 3. 3B KAMBUR BALİNA MOTORU (THREE.JS 3D HUMPBACK WHALE & OCEAN BREACH)
+// ========================================================
+class WhaleThreeEngine {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.isBreaching = false;
+    this.breachTime = 0;
+    this.breachDuration = 4.6; // sn
+    this.hasSprayedBlowhole = false;
+    this.hasImpactedWater = false;
+    this.lastTime = performance.now();
+
+    this.initScene();
+    this.buildWhale();
+    this.buildWaterParticles();
+    this.bindEvents();
+    this.animate = this.animate.bind(this);
+    requestAnimationFrame(this.animate);
+  }
+
+  initScene() {
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(42, this.width / this.height, 0.1, 1000);
+    this.camera.position.set(0, 4, 30);
+    this.camera.lookAt(0, 2, 0);
+
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true });
+    this.renderer.setSize(this.width, this.height);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Işıklandırma
+    const sunLight = new THREE.DirectionalLight(0xfff8ee, 2.8);
+    sunLight.position.set(12, 22, 16);
+    this.scene.add(sunLight);
+
+    const rimLight = new THREE.DirectionalLight(0x00f2fe, 1.8);
+    rimLight.position.set(-16, -10, -10);
+    this.scene.add(rimLight);
+
+    const oceanAmbient = new THREE.AmbientLight(0x224466, 1.4);
+    this.scene.add(oceanAmbient);
+  }
+
+  buildWhale() {
+    this.whaleGroup = new THREE.Group();
+
+    // 1. Gövde Geometrisi (Megaptera novaeangliae Fusiform Hull)
+    const numRings = 28;
+    const numSegs = 24;
+    const positions = [];
+    const colors = [];
+    const indices = [];
+
+    function getStation(u) {
+      let w, h, yOff;
+      if (u < 0.2) {
+        const t = u / 0.2;
+        w = 0.5 + t * 2.5;
+        h = 0.4 + t * 1.4;
+        yOff = 0.1 * t;
+      } else if (u < 0.45) {
+        const t = (u - 0.2) / 0.25;
+        w = 3.0 + (1 - (t - 0.5) * (t - 0.5) * 4) * 0.8;
+        h = 1.8 + t * 1.3;
+        yOff = -0.3 * t;
+      } else if (u < 0.8) {
+        const t = (u - 0.45) / 0.35;
+        w = 3.4 * (1 - t * 0.65);
+        h = 3.1 * (1 - t * 0.68);
+        yOff = -0.3 * (1 - t);
+      } else {
+        const t = (u - 0.8) / 0.2;
+        w = 1.2 * (1 - t * 0.65);
+        h = 1.0 * (1 - t * 0.68);
+        yOff = 0.1 * t;
+      }
+      const z = 11 - u * 23;
+      return { w, h, yOff, z };
+    }
+
+    for (let r = 0; r <= numRings; r++) {
+      const u = r / numRings;
+      const st = getStation(u);
+
+      for (let s = 0; s <= numSegs; s++) {
+        const theta = (s / numSegs) * Math.PI * 2;
+        let x = st.w * Math.sin(theta);
+        let y = st.yOff + st.h * Math.cos(theta);
+        const z = st.z;
+
+        // Karın olukları (Ventral Pleats)
+        const isBelly = (Math.cos(theta) < -0.15) && (u > 0.08 && u < 0.6);
+        if (isBelly) {
+          y += Math.cos(theta * 28) * 0.06;
+        }
+
+        // Çene & Burun Yumruları (Tubercles)
+        if (u < 0.25 && Math.cos(theta) > 0.3) {
+          y += Math.sin(u * 40) * Math.cos(theta * 10) * 0.07;
+        }
+
+        positions.push(x, y, z);
+
+        // Çift Renk: Üstü Okyanus Kobalt/Siyahı, Altı İnci Beyazı
+        if (Math.cos(theta) < -0.15) {
+          colors.push(0.92, 0.95, 0.98); // Parlak karın
+        } else {
+          colors.push(0.08, 0.13, 0.20); // Sırt
+        }
+      }
+    }
+
+    for (let r = 0; r < numRings; r++) {
+      for (let s = 0; s < numSegs; s++) {
+        const i1 = r * (numSegs + 1) + s;
+        const i2 = (r + 1) * (numSegs + 1) + s;
+        const i3 = (r + 1) * (numSegs + 1) + (s + 1);
+        const i4 = r * (numSegs + 1) + (s + 1);
+        indices.push(i1, i2, i4);
+        indices.push(i2, i3, i4);
+      }
+    }
+
+    const bodyGeo = new THREE.BufferGeometry();
+    bodyGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    bodyGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    bodyGeo.setIndex(indices);
+    bodyGeo.computeVertexNormals();
+
+    const bodyMat = new THREE.MeshStandardMaterial({
+      vertexColors: true,
+      roughness: 0.18,
+      metalness: 0.15,
+      side: THREE.DoubleSide
+    });
+    this.bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
+    this.whaleGroup.add(this.bodyMesh);
+
+    // 2. Devasa Kanat Yüzgeçler (Pectoral Flippers - 1/3 Gövde Uzunluğu)
+    function createFlipper(isLeft) {
+      const flipperShape = new THREE.Shape();
+      flipperShape.moveTo(0, 0);
+      flipperShape.bezierCurveTo(2.5, 0.4, 7.0, -1.2, 9.5, -3.8);
+      flipperShape.bezierCurveTo(8.5, -4.2, 5.0, -3.2, 3.0, -2.2);
+      flipperShape.bezierCurveTo(1.5, -1.5, 0.5, -0.8, 0, 0);
+
+      const extrudeSettings = { depth: 0.25, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.1, bevelThickness: 0.1 };
+      const flipperGeo = new THREE.ExtrudeGeometry(flipperShape, extrudeSettings);
+      flipperGeo.computeVertexNormals();
+
+      const flipperMat = new THREE.MeshStandardMaterial({
+        color: isLeft ? 0x111c29 : 0x132030,
+        roughness: 0.2,
+        metalness: 0.12
+      });
+
+      const mesh = new THREE.Mesh(flipperGeo, flipperMat);
+      const group = new THREE.Group();
+      group.add(mesh);
+      group.position.set(isLeft ? 3.2 : -3.2, -0.8, 3.2);
+      if (isLeft) {
+        group.rotation.set(0.2, 0.4, -0.55);
+      } else {
+        mesh.scale.set(-1, 1, 1);
+        group.rotation.set(0.2, -0.4, 0.55);
+      }
+      return group;
+    }
+
+    this.leftFlipper = createFlipper(true);
+    this.rightFlipper = createFlipper(false);
+    this.whaleGroup.add(this.leftFlipper);
+    this.whaleGroup.add(this.rightFlipper);
+
+    // 3. Geniş Kuyruk Kanadı (Caudal Flukes)
+    const flukeShape = new THREE.Shape();
+    flukeShape.moveTo(0, 0);
+    flukeShape.bezierCurveTo(2.5, 0.3, 5.2, 0.8, 6.8, 1.8);
+    flukeShape.bezierCurveTo(6.4, 0.8, 4.5, -0.6, 2.2, -1.2);
+    flukeShape.bezierCurveTo(0.8, -1.4, 0.2, -0.8, 0, -0.3);
+    flukeShape.bezierCurveTo(-0.2, -0.8, -0.8, -1.4, -2.2, -1.2);
+    flukeShape.bezierCurveTo(-4.5, -0.6, -6.4, 0.8, -6.8, 1.8);
+    flukeShape.bezierCurveTo(-5.2, 0.8, -2.5, 0.3, 0, 0);
+
+    const flukeGeo = new THREE.ExtrudeGeometry(flukeShape, { depth: 0.18, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.08, bevelThickness: 0.08 });
+    flukeGeo.computeVertexNormals();
+    const flukeMat = new THREE.MeshStandardMaterial({ color: 0x0f1822, roughness: 0.2, metalness: 0.12 });
+    const flukeMesh = new THREE.Mesh(flukeGeo, flukeMat);
+
+    this.tailGroup = new THREE.Group();
+    this.tailGroup.position.set(0, 0.1, -12);
+    flukeMesh.rotation.x = Math.PI / 2;
+    this.tailGroup.add(flukeMesh);
+    this.whaleGroup.add(this.tailGroup);
+
+    // 4. Sırt Yüzgeci (Dorsal Fin)
+    const dorsalShape = new THREE.Shape();
+    dorsalShape.moveTo(0, 0);
+    dorsalShape.bezierCurveTo(0.2, 0.8, 0.6, 1.3, 0.4, 1.5);
+    dorsalShape.bezierCurveTo(0.1, 1.2, -0.5, 0.4, -1.4, 0);
+    dorsalShape.closePath();
+    const dorsalGeo = new THREE.ExtrudeGeometry(dorsalShape, { depth: 0.12, bevelEnabled: true, bevelSegments: 1, steps: 1, bevelSize: 0.04, bevelThickness: 0.04 });
+    const dorsalMesh = new THREE.Mesh(dorsalGeo, flukeMat);
+    dorsalMesh.position.set(0, 1.9, -5.5);
+    dorsalMesh.rotation.y = Math.PI / 2;
+    this.whaleGroup.add(dorsalMesh);
+
+    // Başlangıç Konumu: Su altında gizli
+    this.whaleGroup.position.set(-25, -30, -5);
+    this.whaleGroup.scale.set(1.35, 1.35, 1.35);
+    this.scene.add(this.whaleGroup);
+  }
+
+  buildWaterParticles() {
+    // A) Soluk Deliği Buhar Gayzeri (Blowhole Mist)
+    const geyserCount = 120;
+    const geyserGeo = new THREE.BufferGeometry();
+    const geyserPos = new Float32Array(geyserCount * 3);
+    this.geyserVel = [];
+
+    for (let i = 0; i < geyserCount; i++) {
+      geyserPos[i * 3] = 0;
+      geyserPos[i * 3 + 1] = -100;
+      geyserPos[i * 3 + 2] = 0;
+      this.geyserVel.push({
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: 2.2 + Math.random() * 2.5,
+        vz: (Math.random() - 0.5) * 0.8,
+        life: 0
+      });
+    }
+    geyserGeo.setAttribute('position', new THREE.BufferAttribute(geyserPos, 3));
+    const geyserMat = new THREE.PointsMaterial({
+      color: 0xe0f7ff,
+      size: 0.55,
+      transparent: true,
+      opacity: 0.75,
+      blending: THREE.AdditiveBlending
+    });
+    this.geyserPoints = new THREE.Points(geyserGeo, geyserMat);
+    this.scene.add(this.geyserPoints);
+
+    // B) Su Çarpması Radyal Patlaması (Radial Splashdown Eruption)
+    const splashCount = 380;
+    const splashGeo = new THREE.BufferGeometry();
+    const splashPos = new Float32Array(splashCount * 3);
+    this.splashVel = [];
+
+    for (let i = 0; i < splashCount; i++) {
+      splashPos[i * 3] = 0;
+      splashPos[i * 3 + 1] = -100;
+      splashPos[i * 3 + 2] = 0;
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1.5 + Math.random() * 7.5;
+      this.splashVel.push({
+        vx: Math.cos(angle) * speed * 1.4,
+        vy: 3.5 + Math.random() * 6.5,
+        vz: Math.sin(angle) * speed + 2.0, // Kameraya doğru fışkırır!
+        life: 0
+      });
+    }
+    splashGeo.setAttribute('position', new THREE.BufferAttribute(splashPos, 3));
+    const splashMat = new THREE.PointsMaterial({
+      color: 0xcbeefd,
+      size: 0.65,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending
+    });
+    this.splashPoints = new THREE.Points(splashGeo, splashMat);
+    this.scene.add(this.splashPoints);
+  }
+
+  triggerBreach() {
+    if (this.isBreaching) return;
+    this.isBreaching = true;
+    this.breachTime = 0;
+    this.hasSprayedBlowhole = false;
+    this.hasImpactedWater = false;
+
+    // İlk Su Yarma Sesi
+    setTimeout(() => { playWaterCrash(0.6); }, 250);
+  }
+
+  bindEvents() {
+    window.addEventListener('resize', () => {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.camera.aspect = this.width / this.height;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(this.width, this.height);
+    });
+  }
+
+  updateBreach(progress) {
+    // Trajektori Parabolu: Soldan Sağa Görkemli Atlama (Merkez Odaklı)
+    const x = -18 + progress * 36;
+    // Y: Su yüzeyi y = -3. Tepe noktası y = +8.8
+    const y = -3 + Math.sin(progress * Math.PI) * 12.0 - (progress > 0.72 ? (progress - 0.72) * 36 : 0);
+    // Z: -3 -> +7.5 (İzleyicinin gözü önüne kadar yaklaşır!)
+    const z = -3 + Math.sin(progress * Math.PI) * 8.5;
+
+    this.whaleGroup.position.set(x, y, z);
+
+    // Açı & Rotasyon (Gerçek Humpback Breach Roll)
+    const pitch = (0.8 - progress * 1.75);
+    const roll = Math.sin(progress * Math.PI) * 2.05;
+    const yaw = 0.55 - progress * 0.3;
+
+    this.whaleGroup.rotation.set(pitch, yaw, roll);
+
+    // Kuyruk Yüzmesi & Kanat Salınımı
+    if (this.tailGroup) {
+      this.tailGroup.rotation.x = Math.PI / 2 + Math.sin(this.breachTime * 14) * 0.4;
+    }
+    if (this.leftFlipper && this.rightFlipper) {
+      this.leftFlipper.rotation.z = -0.55 + Math.sin(this.breachTime * 10) * 0.25;
+      this.rightFlipper.rotation.z = 0.55 - Math.sin(this.breachTime * 10) * 0.25;
+    }
+
+    // Soluk Deliği Püskürmesi (t ~ %34-45)
+    if (progress > 0.34 && !this.hasSprayedBlowhole) {
+      this.hasSprayedBlowhole = true;
+      playWhaleSong();
+      const gPos = this.geyserPoints.geometry.attributes.position.array;
+      for (let i = 0; i < this.geyserVel.length; i++) {
+        gPos[i * 3] = x + 1.2;
+        gPos[i * 3 + 1] = y + 2.2;
+        gPos[i * 3 + 2] = z + 2.2;
+        this.geyserVel[i].life = 1.0;
+      }
+      this.geyserPoints.geometry.attributes.position.needsUpdate = true;
+    }
+
+    // Suya Çarpma & Ekran Islanması (t ~ %72)
+    if (progress > 0.72 && !this.hasImpactedWater) {
+      this.hasImpactedWater = true;
+      playWaterCrash(1.25);
+      triggerRealWaterSplash();
+
+      const sPos = this.splashPoints.geometry.attributes.position.array;
+      for (let i = 0; i < this.splashVel.length; i++) {
+        sPos[i * 3] = x;
+        sPos[i * 3 + 1] = -2.5;
+        sPos[i * 3 + 2] = z;
+        this.splashVel[i].life = 1.0;
+      }
+      this.splashPoints.geometry.attributes.position.needsUpdate = true;
+    }
+
+    if (progress >= 1.0) {
+      this.isBreaching = false;
+      this.whaleGroup.position.set(-25, -30, -5);
+    }
+  }
+
+  seekProgress(progress) {
+    this.isBreaching = true;
+    this.breachTime = progress * this.breachDuration;
+    this.updateBreach(progress);
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  animate() {
+    requestAnimationFrame(this.animate);
+    const now = performance.now();
+    const dt = Math.min(0.08, Math.max(0.005, (now - this.lastTime) * 0.001));
+    this.lastTime = now;
+
+    if (this.isBreaching) {
+      this.breachTime += dt;
+      const progress = Math.min(1.0, this.breachTime / this.breachDuration);
+      this.updateBreach(progress);
+    }
+
+    // Parçacık Fiziği Güncellemesi
+    if (this.geyserPoints) {
+      const gPos = this.geyserPoints.geometry.attributes.position.array;
+      for (let i = 0; i < this.geyserVel.length; i++) {
+        const v = this.geyserVel[i];
+        if (v.life > 0) {
+          gPos[i * 3] += v.vx;
+          gPos[i * 3 + 1] += v.vy;
+          gPos[i * 3 + 2] += v.vz;
+          v.vy -= 0.08; // Yerçekimi
+          v.life -= 0.015;
+          if (v.life <= 0) gPos[i * 3 + 1] = -100;
+        }
+      }
+      this.geyserPoints.geometry.attributes.position.needsUpdate = true;
+    }
+
+    if (this.splashPoints) {
+      const sPos = this.splashPoints.geometry.attributes.position.array;
+      for (let i = 0; i < this.splashVel.length; i++) {
+        const v = this.splashVel[i];
+        if (v.life > 0) {
+          sPos[i * 3] += v.vx;
+          sPos[i * 3 + 1] += v.vy;
+          sPos[i * 3 + 2] += v.vz;
+          v.vy -= 0.18; // Hızlı düşüş
+          v.life -= 0.018;
+          if (v.life <= 0) sPos[i * 3 + 1] = -100;
+        }
+      }
+      this.splashPoints.geometry.attributes.position.needsUpdate = true;
+    }
+
+    this.renderer.render(this.scene, this.camera);
+  }
+}
+
+
+// ========================================================
+// 4. 3B WEBGL ETERİK KELEBEKLER MOTORU (THREE.JS 3D FLAPPING BUTTERFLIES)
+// ========================================================
+class ButterfliesThreeEngine {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    this.butterflies = [];
+    this.mouseX = 0;
+    this.mouseY = 0;
+
+    this.initScene();
+    this.loadTexturesAndBuild();
+    this.bindEvents();
+    this.animate = this.animate.bind(this);
+    requestAnimationFrame(this.animate);
+  }
+
+  initScene() {
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.1, 1000);
+    this.camera.position.set(0, 0, 32);
+
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true });
+    this.renderer.setSize(this.width, this.height);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const amb = new THREE.AmbientLight(0xffffff, 1.4);
+    this.scene.add(amb);
+    const dir = new THREE.DirectionalLight(0xfff5e0, 1.0);
+    dir.position.set(10, 15, 15);
+    this.scene.add(dir);
+  }
+
+  loadTexturesAndBuild() {
+    const loader = new THREE.TextureLoader();
+    const species = [
+      { left: 'assets/real_wing_left_blue.png', right: 'assets/real_wing_right_blue.png' },
+      { left: 'assets/real_wing_left_emerald.png', right: 'assets/real_wing_right_emerald.png' },
+      { left: 'assets/real_wing_left_gold.png', right: 'assets/real_wing_right_gold.png' },
+      { left: 'assets/real_wing_left_purple.png', right: 'assets/real_wing_right_purple.png' }
+    ];
+
+    const loadedSpecies = species.map(s => ({
+      left: loader.load(s.left),
+      right: loader.load(s.right)
+    }));
+
+    const count = Math.min(8, Math.max(4, Math.floor(window.innerWidth / 220)));
+
+    for (let i = 0; i < count; i++) {
+      const sp = loadedSpecies[i % loadedSpecies.length];
+      const group = new THREE.Group();
+
+      // Gövde
+      const bodyGeo = new THREE.CylinderGeometry(0.06, 0.04, 1.3, 8);
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x111822, roughness: 0.6 });
+      const body = new THREE.Mesh(bodyGeo, bodyMat);
+      body.rotation.x = Math.PI / 2;
+      group.add(body);
+
+      // Sol Kanat
+      const wingW = 1.35;
+      const wingH = 1.75;
+      const leftGeo = new THREE.PlaneGeometry(wingW, wingH);
+      leftGeo.translate(-wingW * 0.5, 0, 0); // menteşe merkezde
+      const leftMat = new THREE.MeshStandardMaterial({
+        map: sp.left,
+        transparent: true,
+        alphaTest: 0.05,
+        side: THREE.DoubleSide,
+        roughness: 0.35
+      });
+      const leftWing = new THREE.Mesh(leftGeo, leftMat);
+      group.add(leftWing);
+
+      // Sağ Kanat
+      const rightGeo = new THREE.PlaneGeometry(wingW, wingH);
+      rightGeo.translate(wingW * 0.5, 0, 0);
+      const rightMat = new THREE.MeshStandardMaterial({
+        map: sp.right,
+        transparent: true,
+        alphaTest: 0.05,
+        side: THREE.DoubleSide,
+        roughness: 0.35
+      });
+      const rightWing = new THREE.Mesh(rightGeo, rightMat);
+      group.add(rightWing);
+
+      const scale = 1.8 + Math.random() * 0.65;
+      group.scale.set(scale, scale, scale);
+
+      this.scene.add(group);
+
+      this.butterflies.push({
+        group: group,
+        leftWing: leftWing,
+        rightWing: rightWing,
+        x: (Math.random() - 0.5) * 36,
+        y: (Math.random() - 0.5) * 22,
+        z: (Math.random() - 0.5) * 12,
+        vx: (Math.random() > 0.5 ? 1 : -1) * (0.04 + Math.random() * 0.06),
+        vy: (Math.random() - 0.5) * 0.04,
+        vz: (Math.random() - 0.5) * 0.03,
+        flapSpeed: 14 + Math.random() * 6,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  bindEvents() {
+    window.addEventListener('resize', () => {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.camera.aspect = this.width / this.height;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(this.width, this.height);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      this.mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      this.mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+  }
+
+  animate() {
+    requestAnimationFrame(this.animate);
+    const time = performance.now() * 0.001;
+
+    this.butterflies.forEach(b => {
+      b.phase += 0.03;
+      b.x += b.vx;
+      b.y += Math.sin(b.phase * 2) * 0.05 + b.vy;
+      b.z += b.vz;
+
+      // Ekran sınırlarından organik dönüş
+      if (b.x > 22) { b.x = 22; b.vx = -Math.abs(b.vx); }
+      if (b.x < -22) { b.x = -22; b.vx = Math.abs(b.vx); }
+      if (b.y > 14) { b.y = 14; b.vy = -Math.abs(b.vy); }
+      if (b.y < -14) { b.y = -14; b.vy = Math.abs(b.vy); }
+      if (b.z > 8) { b.z = 8; b.vz = -Math.abs(b.vz); }
+      if (b.z < -10) { b.z = -10; b.vz = Math.abs(b.vz); }
+
+      b.group.position.set(b.x, b.y, b.z);
+
+      // Doğal Kanat Çırpma (3B Rotasyon)
+      const flap = Math.sin(time * b.flapSpeed) * 0.72;
+      b.leftWing.rotation.y = flap;
+      b.rightWing.rotation.y = -flap;
+
+      // Uçuş Yönü & Yatma (Banking)
+      const heading = b.vx > 0 ? 0.35 : -0.35;
+      b.group.rotation.set(
+        -b.vy * 8 + Math.sin(b.phase) * 0.15,
+        b.vx > 0 ? 0.4 : Math.PI - 0.4,
+        heading
+      );
+    });
+
+    this.renderer.render(this.scene, this.camera);
+  }
+}
+
+
+// ========================================================
+// 5. BAŞLATICI & TETİKLEYİCİLER
+// ========================================================
+let whaleEngineInstance = null;
+let butterflyEngineInstance = null;
+
+function startAllEngines() {
+  initSplashCanvas();
+  initRainyDay();
+
+  const whaleCanvas = document.getElementById('whaleThreeCanvas');
+  if (whaleCanvas && typeof THREE !== 'undefined' && !whaleEngineInstance) {
+    whaleEngineInstance = new WhaleThreeEngine(whaleCanvas);
+  }
+
+  const butterflyCanvas = document.getElementById('butterflyThreeCanvas');
+  if (butterflyCanvas && typeof THREE !== 'undefined' && !butterflyEngineInstance) {
+    butterflyEngineInstance = new ButterfliesThreeEngine(butterflyCanvas);
+  }
+
+  const summonBtn = document.getElementById('summonWhaleBtn');
+  if (summonBtn) {
+    summonBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      initAudio();
+      if (whaleEngineInstance) {
+        whaleEngineInstance.triggerBreach();
+      }
+    });
+  }
+
+  // Sayfa açıldıktan 1 saniye sonra ilk görkemli atlayış
+  setTimeout(() => {
+    if (whaleEngineInstance && !document.hidden) {
+      whaleEngineInstance.triggerBreach();
+    }
+  }, 1000);
+
+  // Periyodik Atlama (Her 30 saniyede bir)
+  setInterval(() => {
+    if (whaleEngineInstance && !document.hidden && !whaleEngineInstance.isBreaching) {
+      whaleEngineInstance.triggerBreach();
+    }
+  }, 30000);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startAllEngines);
+} else {
+  startAllEngines();
+}

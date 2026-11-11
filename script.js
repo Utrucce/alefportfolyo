@@ -1408,7 +1408,12 @@ function downloadHalTercumesiBelgesi() {
   const headBtns = clone.querySelector('.section-head');
   if (headBtns) headBtns.remove();
 
-  const printWin = window.open('', '_blank', 'width=960,height=840');
+  // Remove decorative butterfly emoji in formal document if present
+  clone.querySelectorAll('h3 span').forEach(sp => {
+    if (sp.textContent && sp.textContent.includes('🦋')) sp.remove();
+  });
+
+  const printWin = window.open('', '_blank', 'width=980,height=860');
   if (!printWin) {
     window.print();
     return;
@@ -1417,81 +1422,212 @@ function downloadHalTercumesiBelgesi() {
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Sertan Çubukcu - Hâl Tercümesi Belgesi</title>
+  <title>Sertan Çubukcu — Hâl Tercümesi Belgesi</title>
   <style>
-    * { box-sizing: border-box; }
+    @page {
+      size: A4;
+      margin: 20mm 18mm 20mm 18mm;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: 'Times New Roman', Times, serif !important;
+    }
     body {
-      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-      color: #111827;
-      background: #ffffff;
+      font-family: 'Times New Roman', Times, serif !important;
+      font-size: 12pt !important;
+      line-height: 1.55 !important;
+      text-align: justify !important;
+      color: #000000 !important;
+      background: #f3f4f6;
       margin: 0;
-      padding: 28px 36px;
-      line-height: 1.55;
+      padding: 28px 16px 48px;
     }
     .doc-toolbar {
+      max-width: 210mm;
+      margin: 0 auto 20px auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #0f172a;
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 10px;
-      margin-bottom: 24px;
+      background: #1e293b;
+      color: #ffffff !important;
+      padding: 12px 22px;
+      border-radius: 8px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+    .doc-toolbar-title {
+      color: #ffffff !important;
+      font-size: 12pt !important;
+      font-weight: bold !important;
     }
     .doc-toolbar button {
-      background: #f59e0b;
-      color: #111827;
-      border: none;
-      padding: 8px 16px;
+      background: #d97706;
+      color: #ffffff !important;
+      border: 1px solid #f59e0b;
+      padding: 8px 18px;
       border-radius: 6px;
-      font-weight: 800;
+      font-weight: bold !important;
+      font-size: 11pt !important;
       cursor: pointer;
-      font-size: 0.9rem;
+    }
+    .doc-toolbar button:hover {
+      background: #b45309;
+    }
+    .doc-sheet {
+      max-width: 210mm;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 22mm 20mm;
+      border: 1px solid #d1d5db;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    .doc-official-header {
+      text-align: center !important;
+      border-bottom: 2px double #000000;
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+    }
+    .doc-official-header h1 {
+      font-size: 14pt !important;
+      font-weight: bold !important;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin: 0 0 4px 0;
+      color: #000000 !important;
+      text-align: center !important;
+    }
+    .doc-official-header .doc-sub {
+      font-size: 12pt !important;
+      font-weight: bold !important;
+      color: #1f2937 !important;
+      text-align: center !important;
     }
     .cv-hero-card, .cv-card {
       background: #ffffff !important;
-      border: 1px solid #d1d5db !important;
-      border-radius: 10px !important;
-      padding: 16px 20px !important;
-      margin-bottom: 16px !important;
+      border: none !important;
+      border-bottom: 1px solid #9ca3af !important;
+      border-radius: 0 !important;
+      padding: 12px 0 16px 0 !important;
+      margin: 0 0 16px 0 !important;
+    }
+    .cv-grid {
+      display: block !important;
+    }
+    .cv-card-header {
+      display: flex !important;
+      align-items: baseline !important;
+      justify-content: space-between !important;
+      border-bottom: 1.5px solid #000000 !important;
+      padding-bottom: 4px !important;
+      margin-bottom: 12px !important;
+    }
+    .cv-card-icon, .badge-dot {
+      display: none !important;
+    }
+    h1, h2, h3, h4, .cv-role, strong {
+      font-family: 'Times New Roman', Times, serif !important;
+      font-size: 12pt !important;
+      font-weight: bold !important;
+      color: #000000 !important;
+      margin: 0 0 4px 0 !important;
+    }
+    .cv-card-header h3 {
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    p, div, span, li, .cv-org {
+      font-family: 'Times New Roman', Times, serif !important;
+      font-size: 12pt !important;
+      color: #000000 !important;
+      text-align: justify !important;
+      line-height: 1.55 !important;
+    }
+    .cv-timeline {
+      display: block !important;
+    }
+    .cv-timeline-item {
+      padding: 8px 0 10px 0 !important;
+      margin-bottom: 8px !important;
+      border-left: none !important;
+      border-bottom: 1px dotted #d1d5db !important;
       page-break-inside: avoid;
     }
-    h3, .cv-role, strong { color: #0f172a !important; }
-    p, .cv-org, span, div { color: #1f2937 !important; }
-    a { color: #0369a1 !important; text-decoration: underline; }
+    .cv-timeline-item:last-child {
+      border-bottom: none !important;
+    }
     .cv-date-badge, .badge {
-      background: #e0f2fe !important;
-      color: #0369a1 !important;
-      border: 1px solid #bae6fd !important;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: inline-block;
+      background: transparent !important;
+      color: #000000 !important;
+      border: none !important;
+      padding: 0 !important;
+      font-size: 12pt !important;
+      font-weight: bold !important;
+      font-style: italic;
+      display: block !important;
+      margin-bottom: 2px !important;
     }
-    .cv-badge-list { display: flex; flex-wrap: wrap; gap: 6px; }
-    .cv-badge-item {
-      border: 1px solid #cbd5e1 !important;
-      background: #f8fafc !important;
-      color: #0f172a !important;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
+    .cv-org {
+      font-style: italic;
+      margin-bottom: 4px !important;
     }
-    .cv-card-icon { display: none !important; }
+    /* Sertifikalar ızgarasını belgede alt alta nizami liste görünümüne dönüştür */
+    .cv-card > div[style*="grid-template-columns"] {
+      display: block !important;
+    }
+    .cv-card > div[style*="grid-template-columns"] > div {
+      background: #ffffff !important;
+      border: none !important;
+      border-bottom: 1px dotted #d1d5db !important;
+      border-radius: 0 !important;
+      padding: 8px 0 !important;
+      margin-bottom: 4px !important;
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: space-between !important;
+      align-items: baseline !important;
+      gap: 16px !important;
+      page-break-inside: avoid;
+    }
+    .cv-card > div[style*="grid-template-columns"] > div > div:first-child > div:first-child {
+      font-weight: bold !important;
+    }
+    a {
+      color: #000000 !important;
+      text-decoration: underline !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      font-size: 12pt !important;
+      font-weight: normal !important;
+    }
     @media print {
-      .doc-toolbar { display: none !important; }
-      body { padding: 0; }
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+      }
+      .doc-toolbar {
+        display: none !important;
+      }
+      .doc-sheet {
+        max-width: 100% !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
     }
   </style>
 </head>
 <body>
   <div class="doc-toolbar">
-    <div><strong>Sertan Çubukcu — Resmî Hâl Tercümesi Belgesi (LinkedIn Birebir Kayıt)</strong></div>
-    <button onclick="window.print()">🖨️ PDF Olarak Kaydet / Yazdır</button>
+    <div class="doc-toolbar-title">Sertan Çubukcu — Hâl Tercümesi Belgesi</div>
+    <button onclick="window.print()">🖨️ Belgeyi Kaydet / Yazdır</button>
   </div>
-  ${clone.innerHTML}
+  <div class="doc-sheet">
+    <div class="doc-official-header">
+      <h1>HÂL TERCÜMESİ BELGESİ</h1>
+      <div class="doc-sub">Sertan Çubukcu</div>
+    </div>
+    ${clone.innerHTML}
+  </div>
   <script>setTimeout(function(){ window.print(); }, 450);<\/script>
 </body>
 </html>`;

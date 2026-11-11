@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { margin: 0; background: #070e17; }
+    canvas { position: fixed; inset: 0; width: 1280px; height: 800px; }
+  </style>
+</head>
+<body>
+  <canvas id="screenSplashCanvas"></canvas>
+  <script src="integrated_engine.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      triggerRealWaterSplash();
+      console.log('Drops created:', screenWaterDrops.length);
+    });
+  </script>
+</body>
+</html>
